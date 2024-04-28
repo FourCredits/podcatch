@@ -3,22 +3,16 @@ package four.credits.podcatch.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
@@ -58,14 +52,20 @@ private fun HomeInner(
                 Text("Submit")
             }
         }
-        Text(
-            text = when (result) {
-                is Result.Loaded -> result.result.take(10_000)
-                Result.Loading -> "Loading..."
-                Result.Nothing -> "Nothing to load yet"
-            },
-            modifier = Modifier.verticalScroll(rememberScrollState()),
-        )
+        when (result) {
+            Result.Loading -> Text("Loading...")
+            Result.Nothing -> Text("Nothing to display yet")
+            is Result.Loaded -> PodcastDisplay(result.result)
+        }
+    }
+}
+
+@Composable
+fun PodcastDisplay(podcast: Podcast) {
+    Card {
+        Text(text = podcast.title)
+        Divider()
+        Text(text = podcast.description)
     }
 }
 
@@ -76,7 +76,10 @@ private fun HomePreview() {
         HomeInner(
             "https://www.example.com",
             {},
-            Result.Loaded("<some xml>"),
+            Result.Loaded(Podcast(
+                "My Podcast",
+                "A podcast where I talk about me"
+            )),
             {},
             {}
         )

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import four.credits.podcatch.PodcatchApplication
+import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.launch
 
@@ -44,5 +45,5 @@ class HomeViewModel(
 sealed interface Result {
     data object Nothing : Result
     data object Loading : Result
-    data class Loaded(val result: String) : Result
+    data class Loaded(val result: Podcast) : Result
 }
