@@ -1,4 +1,4 @@
-package four.credits.podcatch.presentation
+package four.credits.podcatch.presentation.screens.add_podcast
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +13,7 @@ import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class AddPodcastViewModel(
     private val podcastRepository: PodcastRepository
 ): ViewModel() {
     val url = mutableStateOf("")
@@ -36,7 +36,7 @@ class HomeViewModel(
             initializer {
                 val application = this[APPLICATION_KEY] as PodcatchApplication
                 val repository = application.podcastRepository
-                HomeViewModel(repository)
+                AddPodcastViewModel(repository)
             }
         }
     }

@@ -1,23 +1,22 @@
-package four.credits.podcatch.presentation
+package four.credits.podcatch.presentation.screens.add_podcast
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import four.credits.podcatch.domain.Podcast
+import four.credits.podcatch.presentation.common.PodcastDisplay
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
-fun Home(viewModel: HomeViewModel) {
-     HomeInner(
+fun AddPodcastScreen(viewModel: AddPodcastViewModel) {
+     AddPodcastInner(
          url = viewModel.url.value,
          setUrl = { viewModel.url.value = it },
          result = viewModel.result.value,
@@ -27,7 +26,7 @@ fun Home(viewModel: HomeViewModel) {
 }
 
 @Composable
-private fun HomeInner(
+private fun AddPodcastInner(
     url: String,
     setUrl: (String) -> Unit,
     result: Result,
@@ -60,20 +59,11 @@ private fun HomeInner(
     }
 }
 
-@Composable
-fun PodcastDisplay(podcast: Podcast) {
-    Card {
-        Text(text = podcast.title)
-        Divider()
-        Text(text = podcast.description)
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-private fun HomePreview() {
+private fun AddPodcastPreview() {
     PodcatchTheme {
-        HomeInner(
+        AddPodcastInner(
             "https://www.example.com",
             {},
             Result.Loaded(Podcast(
