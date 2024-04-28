@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
+import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
 fun ViewPodcastsScreen(
@@ -25,7 +26,7 @@ fun ViewPodcastsScreen(
     modifier: Modifier = Modifier
 ) {
     ViewPodcastsScreenInner(
-        podcasts = viewModel.podcasts.value,
+        podcasts = viewModel.podcasts,
         onAddPodcastPressed = onAddPodcastPressed,
         modifier = modifier
     )
@@ -69,9 +70,11 @@ private fun AddPodcastFloatingActionButton(onAddPodcastPressed: () -> Unit) {
 @Composable
 private fun ViewPodcastsScreenPreview() {
     val podcasts = listOf(
-        Podcast("Podcast 1", "A podcast about movies"),
-        Podcast("Podcast 2", "A podcast about music"),
-        Podcast("Podcast 3", "A podcast about coding"),
+        Podcast("Podcast 1", "A podcast about movies", link = ""),
+        Podcast("Podcast 2", "A podcast about music", link = ""),
+        Podcast("Podcast 3", "A podcast about coding", link = ""),
     )
-    ViewPodcastsScreenInner(podcasts, {})
+    PodcatchTheme {
+        ViewPodcastsScreenInner(podcasts, {})
+    }
 }

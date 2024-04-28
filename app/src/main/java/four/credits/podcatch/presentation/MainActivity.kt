@@ -47,9 +47,12 @@ private fun Root() {
                     )
                 }
                 composable("add_podcast") {
-                    AddPodcastScreen(viewModel<AddPodcastViewModel>(
-                        factory = AddPodcastViewModel.Factory
-                    ))
+                    AddPodcastScreen(
+                        viewModel<AddPodcastViewModel>(
+                            factory = AddPodcastViewModel.Factory
+                        ),
+                        onNavigateUp = { navController.popBackStack() }
+                    )
                 }
             }
         }

@@ -9,7 +9,7 @@ import java.lang.IllegalStateException
 // TODO: don't throw in this code
 val ns: String? = null
 
-fun parsePodcast(stream: InputStream): List<Podcast> {
+fun parsePodcast(stream: InputStream, link: String): List<Podcast> {
     val parser: XmlPullParser = Xml.newPullParser()
     parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
     parser.setInput(stream, null)
@@ -23,7 +23,7 @@ fun parsePodcast(stream: InputStream): List<Podcast> {
             continue
         }
         if (parser.name == "channel") {
-            entries.add(parser.readEntry())
+            entries.add(parser.readEntry(link))
         } else {
             parser.skip()
         }
@@ -32,7 +32,7 @@ fun parsePodcast(stream: InputStream): List<Podcast> {
     return entries
 }
 
-fun XmlPullParser.readEntry(): Podcast {
+fun XmlPullParser.readEntry(link: String): Podcast {
     require(XmlPullParser.START_TAG, ns, "channel")
     var title: String? = null
     var description: String? = null
@@ -48,7 +48,7 @@ fun XmlPullParser.readEntry(): Podcast {
     }
     require(XmlPullParser.END_TAG, ns, "channel")
     if (title != null && description != null)
-        return Podcast(title, description)
+        return Podcast(title, description, link)
     else
         throw ParseError(
             "one or more parameters are null: ($title, $description)"
