@@ -2,6 +2,6 @@
   still very much a work in progress
 ** TODO read up on some things [0/2]
 *** TODO Room basics
-    [[https://developer.android.com/training/data-storage/room#database]]
+    [[https://developer.android.com/training/data-storage/room]]
 *** TODO Migrating Room databases
     [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
