@@ -1,7 +1,28 @@
 * An android podcast application
   still very much a work in progress
+** TODO don't hardcode navigation strings
+** TODO don't hardcode spacing
+** TODO store podcasts in a database
+*** TODO add migrations to be able to handle different versions
+** TODO don't hardcode icon type
+** TODO don't hardcode alt text
+** TODO don't hardcode padding/spacing
+** TODO don't allow adding multiple of the same podcast
+** TODO allow deletion of podcasts
+** TODO add button to insert link from clipboard
+** TODO improve xml parsing code
+*** TODO make it slightly more declarative, build up a mini-dsl
+*** TODO make it more fault tolerant
+** TODO parse xml to list episodes
+** TODO display images for podcasts
+*** TODO parse from xml
+*** TODO download
+probably involves using coil?
+** TODO download the episodes themselves
+** TODO enable playing podcasts
+** TODO periodically check podcasts for updates
 ** TODO read up on some things [0/2]
 *** TODO Room basics
-    [[https://developer.android.com/training/data-storage/room]]
+[[https://developer.android.com/training/data-storage/room]]
 *** TODO Migrating Room databases
-    [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
+[[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
