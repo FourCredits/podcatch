@@ -5,7 +5,7 @@
 ** TODO store podcasts in a database
 *** TODO add migrations to be able to handle different versions
 ** DONE don't hardcode icon type
-** TODO don't hardcode alt text
+** DONE don't hardcode alt text
 ** DONE don't hardcode padding/spacing
 ** TODO don't allow adding multiple of the same podcast
 ** TODO allow deletion of podcasts

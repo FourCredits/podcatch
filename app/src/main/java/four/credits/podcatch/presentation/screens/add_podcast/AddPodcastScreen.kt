@@ -18,7 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
 import four.credits.podcatch.presentation.theme.AppIcons
@@ -65,12 +67,12 @@ private fun AddPodcastInner(
                 )) {
                     Icon(
                         AppIcons.Clear,
-                        "Clear input",
+                        stringResource(R.string.alt_clear_input),
                         modifier = Modifier.clickable { onClear() }
                     )
                     Icon(
                         imageVector = AppIcons.Search,
-                        contentDescription = "Search for podcast",
+                        stringResource(R.string.alt_search_for_podcast),
                         modifier = Modifier.clickable { onSearch() }
                     )
                 }
@@ -79,12 +81,14 @@ private fun AddPodcastInner(
         )
         // TODO: add option to insert from clipboard
         when (result) {
-            Result.Loading -> Text("Loading...")
-            Result.Nothing -> Text("Nothing to display yet")
+            Result.Loading -> Text(stringResource(R.string.loading))
+            Result.Nothing -> Text(
+                stringResource(R.string.nothing_to_display_yet)
+            )
             is Result.Loaded -> Column {
                 PodcastDisplay(result.podcast)
                 Button(onClick = onAdd) {
-                    Text("Add Podcast")
+                    Text(stringResource(R.string.add_podcast))
                     Icon(AppIcons.Add, null)
                 }
             }
