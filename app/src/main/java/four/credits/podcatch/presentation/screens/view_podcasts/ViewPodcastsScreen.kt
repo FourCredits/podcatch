@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -14,9 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
+import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
@@ -64,7 +63,7 @@ private fun AddPodcastFloatingActionButton(onAddPodcastPressed: () -> Unit) {
         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
     ) {
         // TODO: don't hard code the button type, or alt text
-        Icon(Icons.Filled.Add, "Add new podcast")
+        Icon(AppIcons.Add, "Add new podcast")
     }
 }
 

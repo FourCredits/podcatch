@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -20,9 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
+import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
@@ -65,12 +64,12 @@ private fun AddPodcastInner(
                     LocalSpacing.current.small
                 )) {
                     Icon(
-                        Icons.Filled.Clear,
+                        AppIcons.Clear,
                         "Clear input",
                         modifier = Modifier.clickable { onClear() }
                     )
                     Icon(
-                        imageVector = Icons.Filled.Search,
+                        imageVector = AppIcons.Search,
                         contentDescription = "Search for podcast",
                         modifier = Modifier.clickable { onSearch() }
                     )
@@ -86,7 +85,7 @@ private fun AddPodcastInner(
                 PodcastDisplay(result.podcast)
                 Button(onClick = onAdd) {
                     Text("Add Podcast")
-                    Icon(Icons.Filled.Add, null)
+                    Icon(AppIcons.Add, null)
                 }
             }
         }
