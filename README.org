@@ -1,12 +1,12 @@
 * An android podcast application
   still very much a work in progress
 ** DONE don't hardcode navigation strings
-** TODO don't hardcode spacing
+** DONE don't hardcode spacing
 ** TODO store podcasts in a database
 *** TODO add migrations to be able to handle different versions
 ** TODO don't hardcode icon type
 ** TODO don't hardcode alt text
-** TODO don't hardcode padding/spacing
+** DONE don't hardcode padding/spacing
 ** TODO don't allow adding multiple of the same podcast
 ** TODO allow deletion of podcasts
 ** TODO add button to insert link from clipboard

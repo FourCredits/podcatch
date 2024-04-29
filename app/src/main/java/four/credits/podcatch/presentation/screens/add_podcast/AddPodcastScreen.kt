@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
+import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
@@ -30,17 +31,17 @@ fun AddPodcastScreen(
     viewModel: AddPodcastViewModel,
     onNavigateUp: () -> Unit
 ) {
-     AddPodcastInner(
-         url = viewModel.url,
-         setUrl = { viewModel.url = it },
-         result = viewModel.result,
-         onSearch = { viewModel.searchUrl() },
-         onClear = { viewModel.clearSearch() },
-         onAdd = {
-             viewModel.addPodcast()
-             onNavigateUp()
-         }
-     )
+    AddPodcastInner(
+        url = viewModel.url,
+        setUrl = { viewModel.url = it },
+        result = viewModel.result,
+        onSearch = { viewModel.searchUrl() },
+        onClear = { viewModel.clearSearch() },
+        onAdd = {
+            viewModel.addPodcast()
+            onNavigateUp()
+        }
+    )
 }
 
 @Composable
@@ -59,9 +60,10 @@ private fun AddPodcastInner(
             label = { Text("Enter the url to use") },
             singleLine = true,
             trailingIcon = {
-                // TODO: don't hardcode spacing
                 // TODO: what's the recommended spacing?
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(
+                    LocalSpacing.current.small
+                )) {
                     Icon(
                         Icons.Filled.Clear,
                         "Clear input",

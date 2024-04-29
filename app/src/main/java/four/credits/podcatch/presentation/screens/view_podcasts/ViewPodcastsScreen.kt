@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.common.PodcastDisplay
+import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
@@ -45,8 +46,9 @@ private fun ViewPodcastsScreenInner(
     ) { padding ->
         LazyColumn(
             modifier = modifier.padding(padding),
-            // TODO: standardise padding
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(
+                LocalSpacing.current.medium
+            )
         ) {
             // TODO: is keying off title alright?
             items(podcasts, key = { it.title }) { PodcastDisplay(it) }
