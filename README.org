@@ -1,5 +1,5 @@
 * An android podcast application
-  still very much a work in progress
+still very much a work in progress
 ** DONE don't hardcode navigation strings
 ** DONE don't hardcode spacing
 ** TODO store podcasts in a database
