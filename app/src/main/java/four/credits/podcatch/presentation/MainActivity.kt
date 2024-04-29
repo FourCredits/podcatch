@@ -31,30 +31,37 @@ private fun Root() {
     PodcatchTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
-            val navController = rememberNavController()
-            // TODO: don't hardcode these strings
-            NavHost(navController, startDestination = "view_podcasts") {
-                composable("view_podcasts") {
-                    ViewPodcastsScreen(
-                        viewModel<ViewPodcastsViewModel>(
-                            factory = ViewPodcastsViewModel.Factory
-                        ),
-                        onAddPodcastPressed = {
-                            navController.navigate("add_podcast")
-                        }
-                    )
+            NavRoot()
+        }
+    }
+}
+
+private const val ViewPodcastsRoute = "view_podcasts"
+private const val AddPodcastRoute = "add_podcast"
+
+@Composable
+private fun NavRoot() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = ViewPodcastsRoute) {
+        composable(ViewPodcastsRoute) {
+            ViewPodcastsScreen(
+                viewModel<ViewPodcastsViewModel>(
+                    factory = ViewPodcastsViewModel.Factory
+                ),
+                onAddPodcastPressed = {
+                    navController.navigate(AddPodcastRoute)
                 }
-                composable("add_podcast") {
-                    AddPodcastScreen(
-                        viewModel<AddPodcastViewModel>(
-                            factory = AddPodcastViewModel.Factory
-                        ),
-                        onNavigateUp = { navController.popBackStack() }
-                    )
-                }
-            }
+            )
+        }
+        composable(AddPodcastRoute) {
+            AddPodcastScreen(
+                viewModel<AddPodcastViewModel>(
+                    factory = AddPodcastViewModel.Factory
+                ),
+                onNavigateUp = { navController.popBackStack() }
+            )
         }
     }
 }
