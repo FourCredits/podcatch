@@ -14,18 +14,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class Spacing(
-    val verySmall: Dp = 2.dp,
-    val small: Dp = 4.dp,
-    val medium: Dp = 8.dp,
-    val large: Dp = 16.dp,
-    val veryLarge: Dp = 32.dp,
+    val verySmall: Dp = 4.dp,
+    val small: Dp = 8.dp,
+    val medium: Dp = 16.dp,
+    val large: Dp = 32.dp,
+    val veryLarge: Dp = 64.dp,
 )
 
 val LocalSpacing = staticCompositionLocalOf { Spacing() }
 
 @Preview
 @Composable
-fun SpacingPreview() = Column {
+private fun SpacingPreview() = Column {
     val spacingValues = listOf(
         LocalSpacing.current.verySmall,
         LocalSpacing.current.small,
