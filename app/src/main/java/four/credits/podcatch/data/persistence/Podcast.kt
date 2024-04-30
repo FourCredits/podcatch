@@ -14,8 +14,7 @@ data class Podcast(
     val link: String,
 )
 
-fun Podcast.toDomainModel() =
-    DomainPodcast(title = title, description = description, link = link)
+fun Podcast.toDomainModel() = DomainPodcast(title, description, link, id)
 
-fun DomainPodcast.toDatabaseModel() =
-    Podcast(title = title, description = description, link = link)
+fun DomainPodcast.toDatabaseModel(): Podcast =
+    Podcast(id, title, description, link)

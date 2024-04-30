@@ -22,6 +22,9 @@ class InternetPodcastRepository(
     override suspend fun addPodcast(podcast: Podcast) =
         dao.upsertPodcast(podcast.toDatabaseModel())
 
+    override suspend fun deletePodcast(podcast: Podcast) =
+        dao.deletePodcast(podcast.toDatabaseModel())
+
     override fun allPodcasts(): Flow<List<Podcast>> = dao
         .getPodcastsOrderedByTitle()
         .map { podcasts -> podcasts.map { it.toDomainModel() } }

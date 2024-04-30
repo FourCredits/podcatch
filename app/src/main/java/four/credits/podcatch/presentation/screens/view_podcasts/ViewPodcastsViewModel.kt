@@ -12,24 +12,23 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import four.credits.podcatch.PodcatchApplication
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ViewPodcastsViewModel(
     private val podcastRepository: PodcastRepository
 ) : ViewModel() {
-    var podcasts by mutableStateOf(listOf<Podcast>())
-        private set
+    val podcasts = podcastRepository
+        .allPodcasts()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), listOf())
 
-    init {
-        viewModelScope.launch {
-            podcastRepository.allPodcasts().collect {
-                podcasts = it
-            }
-        }
-    }
+    fun deletePodcast(podcast: Podcast) =
+        viewModelScope.launch { podcastRepository.deletePodcast(podcast) }
 
     companion object {
-        val Factory : ViewModelProvider.Factory = viewModelFactory {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as PodcatchApplication
                 val repository = application.podcastRepository
