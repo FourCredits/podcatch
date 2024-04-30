@@ -1,34 +1,28 @@
 package four.credits.podcatch.data
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import four.credits.podcatch.data.persistence.PodcastDao
+import four.credits.podcatch.data.persistence.toDatabaseModel
+import four.credits.podcatch.data.persistence.toDomainModel
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.net.URL
-import kotlin.time.Duration.Companion.milliseconds
 
-class InternetPodcastRepository: PodcastRepository {
-    // TODO: don't just store in memory
-    private val podcasts = mutableListOf<Podcast>()
-
+class InternetPodcastRepository(
+    private val dao: PodcastDao,
+) : PodcastRepository {
     override suspend fun getPodcast(url: String): Podcast =
         withContext(Dispatchers.IO) {
             URL(url).openStream().use { parsePodcast(it, url).first() }
         }
 
-    override suspend fun addPodcast(podcast: Podcast) {
-        podcasts.add(podcast)
-    }
+    override suspend fun addPodcast(podcast: Podcast) =
+        dao.upsertPodcast(podcast.toDatabaseModel())
 
-    override fun allPodcasts(): Flow<List<Podcast>> = flow {
-        while(true) {
-            emit(podcasts)
-            delay(500.milliseconds)
-        }
-    }
+    override fun allPodcasts(): Flow<List<Podcast>> = dao
+        .getPodcastsOrderedByTitle()
+        .map { podcasts -> podcasts.map { it.toDomainModel() } }
 }

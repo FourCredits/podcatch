@@ -2,8 +2,7 @@
 still very much a work in progress
 ** DONE don't hardcode navigation strings
 ** DONE don't hardcode spacing
-** TODO store podcasts in a database
-*** TODO add migrations to be able to handle different versions
+** DONE store podcasts in a database
 ** DONE don't hardcode icon type
 ** DONE don't hardcode alt text
 ** DONE don't hardcode padding/spacing
