@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
@@ -33,12 +34,14 @@ fun AddPodcastScreen(
     viewModel: AddPodcastViewModel,
     onNavigateUp: () -> Unit
 ) {
+    val url by viewModel.url.collectAsStateWithLifecycle()
+    val result by viewModel.result.collectAsStateWithLifecycle()
     AddPodcastInner(
-        url = viewModel.url,
-        setUrl = { viewModel.url = it },
-        result = viewModel.result,
-        onSearch = { viewModel.searchUrl() },
-        onClear = { viewModel.clearSearch() },
+        url,
+        setUrl = viewModel::setSearch,
+        result,
+        onSearch = viewModel::searchUrl,
+        onClear = viewModel::clearSearch,
         onAdd = {
             viewModel.addPodcast()
             onNavigateUp()
