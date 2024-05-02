@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
-import four.credits.podcatch.presentation.common.PodcastDisplay
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -86,7 +87,11 @@ private fun AddPodcastInner(
                 stringResource(R.string.nothing_to_display_yet)
             )
             is Result.Loaded -> Column {
-                PodcastDisplay(result.podcast)
+                Card {
+                    Text(text = result.podcast.title)
+                    HorizontalDivider()
+                    Text(text = result.podcast.description)
+                }
                 Button(onClick = onAdd) {
                     Text(stringResource(R.string.add_podcast))
                     Icon(AppIcons.Add, null)
