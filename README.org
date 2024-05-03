@@ -20,9 +20,9 @@ probably involves using coil?
 ** TODO download the episodes themselves
 ** TODO enable playing podcasts
 ** TODO periodically check podcasts for updates
-** TODO don't use =State= in =ViewModel=​s
+** DONE don't use =State= in =ViewModel=​s
 not really sure about this one, frankly - =StateFlow=​s seem to behave better with flows like from a database, but =State= is simpler in other cases
-** TODO add tests [/]
+** TODO add tests [0/2]
 *** TODO unit tests
 *** TODO android/integration tests
 ** TODO read up on some things [0/2]
@@ -30,3 +30,7 @@ not really sure about this one, frankly - =StateFlow=​s seem to behave better 
 [[https://developer.android.com/training/data-storage/room]]
 *** TODO Migrating Room databases
 [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
+** TODO check out the example podcast app
+*** link
+[[https://github.com/android/compose-samples/tree/main/Jetcaster][compose-samples/Jetcaster]]
+*** only for when i'm happy with mine, or really stuck

@@ -17,13 +17,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
@@ -36,7 +36,7 @@ fun ViewPodcastsScreen(
     onAddPodcastPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val podcasts by viewModel.podcasts.collectAsState()
+    val podcasts by viewModel.podcasts.collectAsStateWithLifecycle()
     ViewPodcastsScreenInner(
         podcasts,
         onAddPodcastPressed = onAddPodcastPressed,

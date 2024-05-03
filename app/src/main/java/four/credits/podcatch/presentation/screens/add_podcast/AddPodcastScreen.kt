@@ -9,6 +9,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -20,9 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
-import four.credits.podcatch.presentation.common.PodcastDisplay
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -32,12 +34,14 @@ fun AddPodcastScreen(
     viewModel: AddPodcastViewModel,
     onNavigateUp: () -> Unit
 ) {
+    val url by viewModel.url.collectAsStateWithLifecycle()
+    val result by viewModel.result.collectAsStateWithLifecycle()
     AddPodcastInner(
-        url = viewModel.url,
-        setUrl = { viewModel.url = it },
-        result = viewModel.result,
-        onSearch = { viewModel.searchUrl() },
-        onClear = { viewModel.clearSearch() },
+        url,
+        setUrl = viewModel::setSearch,
+        result,
+        onSearch = viewModel::searchUrl,
+        onClear = viewModel::clearSearch,
         onAdd = {
             viewModel.addPodcast()
             onNavigateUp()
@@ -86,7 +90,11 @@ private fun AddPodcastInner(
                 stringResource(R.string.nothing_to_display_yet)
             )
             is Result.Loaded -> Column {
-                PodcastDisplay(result.podcast)
+                Card {
+                    Text(text = result.podcast.title)
+                    HorizontalDivider()
+                    Text(text = result.podcast.description)
+                }
                 Button(onClick = onAdd) {
                     Text(stringResource(R.string.add_podcast))
                     Icon(AppIcons.Add, null)
