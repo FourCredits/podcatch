@@ -1,8 +1,8 @@
 package four.credits.podcatch.data
 
-import four.credits.podcatch.data.persistence.PodcastDao
-import four.credits.podcatch.data.persistence.toDatabaseModel
-import four.credits.podcatch.data.persistence.toDomainModel
+import four.credits.podcatch.data.persistence.podcasts.PodcastDao
+import four.credits.podcatch.data.persistence.podcasts.toDatabaseModel
+import four.credits.podcatch.data.persistence.podcasts.toDomainModel
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.Dispatchers

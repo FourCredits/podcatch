@@ -1,4 +1,4 @@
-package four.credits.podcatch.data.persistence
+package four.credits.podcatch.data.persistence.podcasts
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
