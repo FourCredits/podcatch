@@ -28,4 +28,7 @@ class InternetPodcastRepository(
     override fun allPodcasts(): Flow<List<Podcast>> = dao
         .getPodcastsOrderedByTitle()
         .map { podcasts -> podcasts.map { it.toDomainModel() } }
+
+    override fun getPodcastById(id: Long): Flow<Podcast?> =
+        dao.getPodcastById(id).map { podcast -> podcast?.toDomainModel() }
 }

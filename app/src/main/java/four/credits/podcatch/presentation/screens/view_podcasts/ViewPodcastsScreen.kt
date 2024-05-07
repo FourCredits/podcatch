@@ -1,24 +1,21 @@
 package four.credits.podcatch.presentation.screens.view_podcasts
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,14 +31,13 @@ import four.credits.podcatch.presentation.theme.PodcatchTheme
 fun ViewPodcastsScreen(
     viewModel: ViewPodcastsViewModel,
     onAddPodcastPressed: () -> Unit,
-    modifier: Modifier = Modifier,
+    onPodcastPressed: (Long) -> Unit,
 ) {
     val podcasts by viewModel.podcasts.collectAsStateWithLifecycle()
     ViewPodcastsScreenInner(
         podcasts,
         onAddPodcastPressed = onAddPodcastPressed,
-        onDeletePodcast = viewModel::deletePodcast,
-        modifier = modifier
+        onPodcastPressed = onPodcastPressed,
     )
 }
 
@@ -49,8 +45,7 @@ fun ViewPodcastsScreen(
 private fun ViewPodcastsScreenInner(
     podcasts: List<Podcast>,
     onAddPodcastPressed: () -> Unit,
-    onDeletePodcast: (Podcast) -> Unit,
-    modifier: Modifier = Modifier,
+    onPodcastPressed: (Long) -> Unit,
 ) {
     Scaffold(
         floatingActionButton = {
@@ -58,37 +53,29 @@ private fun ViewPodcastsScreenInner(
         }
     ) { padding ->
         LazyColumn(
-            modifier = modifier.padding(padding),
+            modifier = Modifier.padding(padding),
             verticalArrangement = Arrangement.spacedBy(
                 LocalSpacing.current.medium
             )
         ) {
             // TODO: is keying off title alright?
             items(podcasts, key = { it.title }) {
-                PodcastDisplay(
-                    podcast = it,
-                    onDelete = { onDeletePodcast(it) }
-                )
+                PodcastDisplay(podcast = it, onPressed = onPodcastPressed)
             }
         }
     }
 }
 
 @Composable
-fun PodcastDisplay(podcast: Podcast, onDelete: () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = podcast.title)
-            HorizontalDivider()
-            Text(
-                text = podcast.description,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        IconButton(onClick = onDelete) {
-            Icon(AppIcons.Delete, stringResource(R.string.alt_delete_podcast))
-        }
+fun PodcastDisplay(podcast: Podcast, onPressed: (Long) -> Unit) {
+    Card(modifier = Modifier.clickable { onPressed(podcast.id) }) {
+        Text(text = podcast.title)
+        HorizontalDivider()
+        Text(
+            text = podcast.description,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 

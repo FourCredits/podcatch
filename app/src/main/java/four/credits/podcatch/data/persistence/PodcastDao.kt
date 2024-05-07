@@ -16,4 +16,7 @@ interface PodcastDao {
 
     @Query("SELECT * FROM podcast ORDER BY title ASC")
     fun getPodcastsOrderedByTitle(): Flow<List<Podcast>>
+
+    @Query("SELECT * FROM podcast WHERE id = :id")
+    fun getPodcastById(id: Long): Flow<Podcast?>
 }

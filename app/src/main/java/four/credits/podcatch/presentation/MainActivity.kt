@@ -9,11 +9,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import four.credits.podcatch.presentation.screens.add_podcast.AddPodcastScreen
 import four.credits.podcatch.presentation.screens.add_podcast.AddPodcastViewModel
+import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsScreen
+import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsViewModel
 import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsScreen
 import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsViewModel
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -40,6 +44,7 @@ private fun Root() {
 
 private const val ViewPodcastsRoute = "view_podcasts"
 private const val AddPodcastRoute = "add_podcast"
+private const val PodcastDetailsRoute = "podcast_details"
 
 @Composable
 private fun NavRoot() {
@@ -52,6 +57,10 @@ private fun NavRoot() {
                 ),
                 onAddPodcastPressed = {
                     navController.navigate(AddPodcastRoute)
+                },
+                onPodcastPressed = { id ->
+                    // TODO: do this in a more type safe manner
+                    navController.navigate("$PodcastDetailsRoute/$id")
                 }
             )
         }
@@ -59,6 +68,21 @@ private fun NavRoot() {
             AddPodcastScreen(
                 viewModel<AddPodcastViewModel>(
                     factory = AddPodcastViewModel.Factory
+                ),
+                onNavigateUp = { navController.popBackStack() }
+            )
+        }
+        composable(
+            "$PodcastDetailsRoute/{${PodcastDetailsViewModel.PODCAST_ID_ARG}}",
+            arguments = listOf(
+                navArgument(PodcastDetailsViewModel.PODCAST_ID_ARG) {
+                    type = NavType.LongType
+                }
+            )
+        ) {
+            PodcastDetailsScreen(
+                viewModel<PodcastDetailsViewModel>(
+                    factory = PodcastDetailsViewModel.Factory
                 ),
                 onNavigateUp = { navController.popBackStack() }
             )
