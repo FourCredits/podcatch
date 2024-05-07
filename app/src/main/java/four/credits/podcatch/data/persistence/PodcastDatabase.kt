@@ -17,6 +17,6 @@ import four.credits.podcatch.data.persistence.podcasts.PodcastDao
 )
 abstract class PodcastDatabase : RoomDatabase() {
     // TODO: rename podcast dao
-    abstract val dao: PodcastDao
+    abstract val podcastDao: PodcastDao
     abstract val episodeDao: EpisodeDao
 }

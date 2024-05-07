@@ -16,6 +16,6 @@ class PodcatchApplication : Application() {
     }
 
     val podcastRepository: PodcastRepository by lazy {
-        InternetPodcastRepository(database.dao)
+        InternetPodcastRepository(database.podcastDao)
     }
 }

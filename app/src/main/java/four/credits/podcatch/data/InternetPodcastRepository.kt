@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 
 class InternetPodcastRepository(
-    private val dao: PodcastDao,
+    private val podcastDao: PodcastDao,
 ) : PodcastRepository {
     override suspend fun getPodcast(url: String): Podcast =
         withContext(Dispatchers.IO) {
@@ -20,15 +20,16 @@ class InternetPodcastRepository(
         }
 
     override suspend fun addPodcast(podcast: Podcast) =
-        dao.upsertPodcast(podcast.toDatabaseModel())
+        podcastDao.upsertPodcast(podcast.toDatabaseModel())
 
     override suspend fun deletePodcast(podcast: Podcast) =
-        dao.deletePodcast(podcast.toDatabaseModel())
+        podcastDao.deletePodcast(podcast.toDatabaseModel())
 
-    override fun allPodcasts(): Flow<List<Podcast>> = dao
+    override fun allPodcasts(): Flow<List<Podcast>> = podcastDao
         .getPodcastsOrderedByTitle()
         .map { podcasts -> podcasts.map { it.toDomainModel() } }
 
-    override fun getPodcastById(id: Long): Flow<Podcast?> =
-        dao.getPodcastById(id).map { podcast -> podcast?.toDomainModel() }
+    override fun getPodcastById(id: Long): Flow<Podcast?> = podcastDao
+        .getPodcastById(id)
+        .map { podcast -> podcast?.toDomainModel() }
 }
