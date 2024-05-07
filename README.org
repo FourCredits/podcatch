@@ -25,6 +25,10 @@ not really sure about this one, frankly - =StateFlow=​s seem to behave better 
 ** TODO add tests [0/2]
 *** TODO unit tests
 *** TODO android/integration tests
+** TODO try shared element transition
+I'm imagining making the thumbnail animate from the view podcasts screen to the podcast details screen
+** TODO Move =compose= calls to their respective blocks
+Following the advice detailed [[https://developer.android.com/guide/navigation/design/type-safety#navigate-destination][here]]
 ** TODO read up on some things [0/2]
 *** TODO Room basics
 [[https://developer.android.com/training/data-storage/room]]

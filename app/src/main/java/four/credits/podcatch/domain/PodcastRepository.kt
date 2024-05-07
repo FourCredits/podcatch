@@ -7,4 +7,5 @@ interface PodcastRepository {
     suspend fun addPodcast(podcast: Podcast)
     suspend fun deletePodcast(podcast: Podcast)
     fun allPodcasts(): Flow<List<Podcast>>
+    fun getPodcastById(id: Long): Flow<Podcast?>
 }

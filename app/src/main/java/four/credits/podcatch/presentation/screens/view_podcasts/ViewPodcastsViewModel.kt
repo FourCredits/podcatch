@@ -24,9 +24,6 @@ class ViewPodcastsViewModel(
         .allPodcasts()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), listOf())
 
-    fun deletePodcast(podcast: Podcast) =
-        viewModelScope.launch { podcastRepository.deletePodcast(podcast) }
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
