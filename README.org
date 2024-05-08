@@ -29,10 +29,11 @@ not really sure about this one, frankly - =StateFlow=​s seem to behave better 
 I'm imagining making the thumbnail animate from the view podcasts screen to the podcast details screen
 ** TODO Move =compose= calls to their respective blocks
 Following the advice detailed [[https://developer.android.com/guide/navigation/design/type-safety#navigate-destination][here]]
-** TODO read up on some things [0/2]
-*** TODO Room basics
+** TODO parse =pubDate= to sort by release date
+** DONE read up on some things [0/0]
+*** DONE Room basics
 [[https://developer.android.com/training/data-storage/room]]
-*** TODO Migrating Room databases
+*** DONE Migrating Room databases
 [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
 ** TODO check out the example podcast app
 *** link
