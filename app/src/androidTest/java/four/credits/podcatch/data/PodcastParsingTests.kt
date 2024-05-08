@@ -6,6 +6,24 @@ import org.junit.Assert.*
 
 class PodcastParsingTests {
     @Test
+    fun correctlyParsesSingleChannel() {
+        val input = """
+            <rss>
+              <channel>
+                <title>Podcast 1</title>
+                <link>https://example.com/1</link>
+                <description>Foo</description>
+              </channel>
+            </rss>
+        """.trimIndent().byteInputStream()
+        val result = parsePodcast(input, "https://example.com/top-level")
+        val expected = listOf(
+            Podcast("Podcast 1", "Foo", "https://example.com/top-level", listOf()),
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
     fun correctlyParsesMultipleChannels() {
         val input = """
             <rss>
@@ -22,7 +40,6 @@ class PodcastParsingTests {
             </rss>
         """.trimIndent().byteInputStream()
         val result = parsePodcast(input, "https://example.com/top-level")
-        // TODO: make tests for feeds with non-zero episodes
         // TODO: make tests for feeds with only one channel
         val expected = listOf(
             Podcast("Podcast 1", "Foo", "https://example.com/top-level", listOf()),
