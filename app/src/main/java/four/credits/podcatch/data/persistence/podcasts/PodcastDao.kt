@@ -1,13 +1,17 @@
-package four.credits.podcatch.data.persistence
+package four.credits.podcatch.data.persistence.podcasts
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PodcastDao {
+    @Insert
+    suspend fun insertPodcast(podcast: Podcast): Long
+
     @Upsert
     suspend fun upsertPodcast(podcast: Podcast)
 

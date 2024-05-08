@@ -1,6 +1,7 @@
 package four.credits.podcatch.data
 
 import android.util.Xml
+import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.Podcast
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
@@ -42,32 +43,58 @@ fun <T> XmlPullParser.withinTag(tag: String, action: (XmlPullParser) -> T): T {
 fun XmlPullParser.readChannel(link: String) = withinTag("channel") {
     var title: String? = null
     var description: String? = null
-    val episodes = mutableListOf<Pair<String, String>>()
+    val episodes = mutableListOf<Episode>()
     while (next() != XmlPullParser.END_TAG) {
         if (eventType != XmlPullParser.START_TAG) {
             continue
         }
         when (name) {
-            "title" -> title = readContents("title")
-            "description" -> description = readContents("description")
+            "title" -> title = readContents()
+            "description" -> description = readContents()
+            "item" -> episodes.add(readItem())
             else -> skip()
         }
     }
-    if (title != null && description != null) Podcast(title, description, link)
+    if (title != null && description != null)
+        Podcast(title, description, link, episodes)
     else throw ParseError(
         "one or more parameters are null: ($title, $description)"
     )
 }
 
-// read the contents of a tag with name `tag` under the cursor
-fun XmlPullParser.readContents(tag: String): String = withinTag(tag) {
-    var result = ""
-    if (next() == XmlPullParser.TEXT) {
-        result = text
-        nextTag()
+fun XmlPullParser.readItem(): Episode = withinTag("item") {
+    var title: String? = null
+    var description: String? = null
+    var link: String? = null
+    while (next() != XmlPullParser.END_TAG) {
+        if (eventType != XmlPullParser.START_TAG) {
+            continue
+        }
+        when (name) {
+            "title" -> title = readContents()
+            "description" -> description = readContents()
+            "enclosure" -> link = readEnclosure()
+            else -> skip()
+        }
     }
-    result
+    if (title != null && description != null && link != null)
+        Episode(title, description, link)
+    else throw ParseError(
+        "one or more parameters are null: ($title, $description, $link)"
+    )
 }
+
+fun XmlPullParser.readEnclosure(): String = withinTag("enclosure") {
+    val url = getAttributeValue(null, "url")
+    val type = getAttributeValue(null, "type")
+    if (type == "audio/mpeg") url.apply { this@readEnclosure.nextTag() }
+    else throw ParseError("only mp3 is supported")
+}
+
+// read the contents of a tag with name `tag` under the cursor
+fun XmlPullParser.readContents(): String =
+    if (next() != XmlPullParser.TEXT) ""
+    else text.apply { this@readContents.nextTag() }
 
 // skip the current tag. works even if the tag is recursive
 fun XmlPullParser.skip() {

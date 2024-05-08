@@ -12,7 +12,9 @@ still very much a work in progress
 ** TODO improve xml parsing code
 *** TODO make it slightly more declarative, build up a mini-dsl
 *** TODO make it more fault tolerant
-** TODO parse xml to list episodes
+don't throw, at least
+**** TODO handle faults at higher levels too
+** DONE parse xml to list episodes
 ** TODO display images for podcasts
 *** TODO parse from xml
 *** TODO download
@@ -27,12 +29,23 @@ not really sure about this one, frankly - =StateFlow=​s seem to behave better 
 *** TODO android/integration tests
 ** TODO try shared element transition
 I'm imagining making the thumbnail animate from the view podcasts screen to the podcast details screen
-** TODO Move =compose= calls to their respective blocks
+** TODO Make screens a little better encapsulated and type-safe
+*** TODO Move =compose= calls to their respective blocks
 Following the advice detailed [[https://developer.android.com/guide/navigation/design/type-safety#navigate-destination][here]]
-** TODO read up on some things [0/2]
-*** TODO Room basics
+*** TODO Make extension methods for navigating to particular screens
+** TODO parse =pubDate= to sort by release date
+** TODO make podcasts unique in their url
+make sure that someone can't add the same podcast twice
+** TODO make episodes detail screen
+** TODO make things pretty [0/3]
+*** TODO spacing
+*** TODO font sizes
+*** TODO coloring
+** TODO make a way of showing a details screen for a podcast that hasn't been saved yet
+** DONE read up on some things [0/0]
+*** DONE Room basics
 [[https://developer.android.com/training/data-storage/room]]
-*** TODO Migrating Room databases
+*** DONE Migrating Room databases
 [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
 ** TODO check out the example podcast app
 *** link
