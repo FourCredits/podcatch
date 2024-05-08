@@ -73,7 +73,7 @@ fun XmlPullParser.readItem(): Episode = withinTag("item") {
         when (name) {
             "title" -> title = readContents()
             "description" -> description = readContents()
-            "link" -> link = readContents()
+            "enclosure" -> link = readEnclosure()
             else -> skip()
         }
     }
@@ -82,6 +82,13 @@ fun XmlPullParser.readItem(): Episode = withinTag("item") {
     else throw ParseError(
         "one or more parameters are null: ($title, $description, $link)"
     )
+}
+
+fun XmlPullParser.readEnclosure(): String = withinTag("enclosure") {
+    val url = getAttributeValue(null, "url")
+    val type = getAttributeValue(null, "type")
+    if (type == "audio/mpeg") url.apply { this@readEnclosure.nextTag() }
+    else throw ParseError("only mp3 is supported")
 }
 
 // read the contents of a tag with name `tag` under the cursor

@@ -1,9 +1,10 @@
 package four.credits.podcatch.presentation.screens.podcast_details
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import four.credits.podcatch.R
+import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -37,15 +39,30 @@ private fun PodcastDetailsScreenInternal(
     podcast: Podcast,
     onDelete: () -> Unit,
 ) {
-    Column {
+    LazyColumn {
         // TODO: don't hardcode font sizes
-        Text(podcast.title, fontSize = 24.sp)
-        HorizontalDivider()
-        Text(podcast.description)
-        Box(modifier = Modifier.weight(1f))
-        IconButton(onClick = onDelete) {
-            Icon(AppIcons.Delete, stringResource(R.string.alt_delete_podcast))
+        item {
+            Text(podcast.title, fontSize = 24.sp)
+            HorizontalDivider()
+            Text(podcast.description)
         }
+        items(items = podcast.episodes, key = { it.id }) {
+            EpisodeDisplay(episode = it, modifier = Modifier.fillMaxWidth())
+        }
+        item {
+            IconButton(onClick = onDelete) {
+                Icon(AppIcons.Delete, stringResource(R.string.alt_delete_podcast))
+            }
+        }
+    }
+}
+
+@Composable
+private fun EpisodeDisplay(episode: Episode, modifier: Modifier = Modifier) {
+    Card {
+        Text(episode.title, fontSize = 16.sp)
+        HorizontalDivider()
+        Text(episode.description)
     }
 }
 
