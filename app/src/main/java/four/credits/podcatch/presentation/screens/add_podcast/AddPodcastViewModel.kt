@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class AddPodcastViewModel(
     private val podcastRepository: PodcastRepository
 ): ViewModel() {
-    val _url = MutableStateFlow("")
+    private val _url = MutableStateFlow("")
     val url: StateFlow<String> = _url
     private val _result = MutableStateFlow<Result>(Result.Nothing)
     val result: StateFlow<Result> = _result
