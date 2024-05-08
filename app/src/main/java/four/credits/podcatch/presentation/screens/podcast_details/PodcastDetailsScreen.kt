@@ -1,7 +1,6 @@
 package four.credits.podcatch.presentation.screens.podcast_details
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Delete
@@ -12,7 +11,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -51,7 +49,7 @@ private fun PodcastDetailsScreenInternal(
             Text(podcast.description)
         }
         items(items = podcast.episodes, key = { it.id }) {
-            EpisodeDisplay(episode = it, modifier = Modifier.fillMaxWidth())
+            EpisodeDisplay(episode = it)
         }
         item {
             IconButton(onClick = onDelete) {
@@ -62,7 +60,7 @@ private fun PodcastDetailsScreenInternal(
 }
 
 @Composable
-private fun EpisodeDisplay(episode: Episode, modifier: Modifier = Modifier) {
+private fun EpisodeDisplay(episode: Episode) {
     Card {
         Text(episode.title, fontSize = 16.sp)
         HorizontalDivider()
@@ -82,7 +80,7 @@ private fun PodcastDetailsScreenPreview() {
                 // TODO: implement displaying podcasts
                 listOf(),
             ),
-            {},
+            onDelete = {},
         )
     }
 }
