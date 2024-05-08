@@ -49,12 +49,12 @@ fun XmlPullParser.readChannel(link: String) = withinTag("channel") {
             continue
         }
         when (name) {
-            "title" -> title = readContents("title")
-            "description" -> description = readContents("description")
+            "title" -> title = readContents()
+            "description" -> description = readContents()
+            "item" -> episodes.add(readItem())
             else -> skip()
         }
     }
-    // TODO: populate episodes list
     if (title != null && description != null)
         Podcast(title, description, link, episodes)
     else throw ParseError(
@@ -62,15 +62,32 @@ fun XmlPullParser.readChannel(link: String) = withinTag("channel") {
     )
 }
 
-// read the contents of a tag with name `tag` under the cursor
-fun XmlPullParser.readContents(tag: String): String = withinTag(tag) {
-    var result = ""
-    if (next() == XmlPullParser.TEXT) {
-        result = text
-        nextTag()
+fun XmlPullParser.readItem(): Episode = withinTag("item") {
+    var title: String? = null
+    var description: String? = null
+    var link: String? = null
+    while (next() != XmlPullParser.END_TAG) {
+        if (eventType != XmlPullParser.START_TAG) {
+            continue
+        }
+        when (name) {
+            "title" -> title = readContents()
+            "description" -> description = readContents()
+            "link" -> link = readContents()
+            else -> skip()
+        }
     }
-    result
+    if (title != null && description != null && link != null)
+        Episode(title, description, link)
+    else throw ParseError(
+        "one or more parameters are null: ($title, $description, $link)"
+    )
 }
+
+// read the contents of a tag with name `tag` under the cursor
+fun XmlPullParser.readContents(): String =
+    if (next() != XmlPullParser.TEXT) ""
+    else text.apply { this@readContents.nextTag() }
 
 // skip the current tag. works even if the tag is recursive
 fun XmlPullParser.skip() {
