@@ -1,5 +1,6 @@
 package four.credits.podcatch.presentation.screens.podcast_details
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ import four.credits.podcatch.R
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
+import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 @Composable
@@ -39,7 +41,9 @@ private fun PodcastDetailsScreenInternal(
     podcast: Podcast,
     onDelete: () -> Unit,
 ) {
-    LazyColumn {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(LocalSpacing.current.medium)
+    ) {
         // TODO: don't hardcode font sizes
         item {
             Text(podcast.title, fontSize = 24.sp)
