@@ -10,9 +10,10 @@ import four.credits.podcatch.data.persistence.podcasts.PodcastDao
 
 @Database(
     entities = [Podcast::class, Episode::class],
-    version = 2,
+    version = 3,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3),
     ]
 )
 abstract class PodcastDatabase : RoomDatabase() {

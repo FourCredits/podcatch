@@ -26,11 +26,10 @@ class InternetPodcastRepository(
         }
 
     override suspend fun addPodcast(podcast: Podcast) {
-        // TODO: find a way to do this in a transaction
-        podcastDao.upsertPodcast(podcast.toDatabaseModel())
-        podcast.episodes.forEach {
-            episodeDao.upsertEpisode(it.toDatabaseModel())
-        }
+        val podcastId = podcastDao.insertPodcast(podcast.toDatabaseModel())
+        episodeDao.upsertEpisode(podcast.episodes.map { episode ->
+            episode.toDatabaseModel().copy(podcastId = podcastId)
+        })
     }
 
     override suspend fun deletePodcast(podcast: Podcast) =

@@ -13,7 +13,8 @@ import four.credits.podcatch.domain.Episode as DomainEpisode
         entity = Podcast::class,
         parentColumns = arrayOf("id"),
         childColumns = arrayOf("podcastId"),
-        onDelete = ForeignKey.CASCADE
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE,
     )],
 )
 data class Episode(

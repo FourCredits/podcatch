@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EpisodeDao {
     @Upsert
+    suspend fun upsertEpisode(episode: List<Episode>)
+
+    @Upsert
     suspend fun upsertEpisode(episode: Episode)
 
     @Delete
