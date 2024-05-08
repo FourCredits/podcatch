@@ -115,7 +115,10 @@ private fun AddPodcastPreview() {
             Result.Loaded(Podcast(
                 "My Podcast",
                 "A podcast where I talk about me",
-                "https://example.com/podcast"
+                "https://example.com/podcast",
+                // TODO: you should possibly be able to see a details screen for
+                //  a podcast you haven't necessarily saved
+                listOf(),
             )),
             {},
             onClear = { text = "" },

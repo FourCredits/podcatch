@@ -45,6 +45,7 @@ class PodcastDetailsViewModel(
             "loading...",
             "loading...",
             "loading...",
+            listOf(),
         )
 
         const val PODCAST_ID_ARG = "podcastId"

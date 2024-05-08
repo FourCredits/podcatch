@@ -14,7 +14,14 @@ data class Podcast(
     val link: String,
 )
 
-fun Podcast.toDomainModel() = DomainPodcast(title, description, link, id)
+// TODO: make way of passing proper episodes
+fun Podcast.toDomainModel() = DomainPodcast(
+    title,
+    description,
+    link,
+    episodes = listOf(),
+    id
+)
 
 fun DomainPodcast.toDatabaseModel(): Podcast =
     Podcast(id, title, description, link)

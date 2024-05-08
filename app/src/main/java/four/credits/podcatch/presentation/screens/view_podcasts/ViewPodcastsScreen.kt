@@ -94,9 +94,24 @@ private fun AddPodcastFloatingActionButton(onAddPodcastPressed: () -> Unit) {
 @Composable
 private fun ViewPodcastsScreenPreview() {
     val podcasts = listOf(
-        Podcast("Podcast 1", "A podcast about movies", link = ""),
-        Podcast("Podcast 2", "A podcast about music", link = ""),
-        Podcast("Podcast 3", "A podcast about coding", link = ""),
+        Podcast(
+            "Podcast 1",
+            "A podcast about movies",
+            link = "",
+            episodes = listOf()
+        ),
+        Podcast(
+            "Podcast 2",
+            "A podcast about music",
+            link = "",
+            episodes = listOf()
+        ),
+        Podcast(
+            "Podcast 3",
+            "A podcast about coding",
+            link = "",
+            episodes = listOf()
+        ),
     )
     PodcatchTheme {
         ViewPodcastsScreenInner(podcasts, {}, {})

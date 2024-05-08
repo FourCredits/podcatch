@@ -57,7 +57,9 @@ private fun PodcastDetailsScreenPreview() {
             Podcast(
                 title = "My very important podcast",
                 description = "A podcast about android development",
-                link = "This shouldn't be visible"
+                link = "This shouldn't be visible",
+                // TODO: implement displaying podcasts
+                listOf(),
             ),
             {},
         )

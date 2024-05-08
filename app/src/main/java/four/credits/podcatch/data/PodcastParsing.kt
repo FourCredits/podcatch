@@ -1,6 +1,7 @@
 package four.credits.podcatch.data
 
 import android.util.Xml
+import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.Podcast
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
@@ -42,7 +43,7 @@ fun <T> XmlPullParser.withinTag(tag: String, action: (XmlPullParser) -> T): T {
 fun XmlPullParser.readChannel(link: String) = withinTag("channel") {
     var title: String? = null
     var description: String? = null
-    val episodes = mutableListOf<Pair<String, String>>()
+    val episodes = mutableListOf<Episode>()
     while (next() != XmlPullParser.END_TAG) {
         if (eventType != XmlPullParser.START_TAG) {
             continue
@@ -53,7 +54,9 @@ fun XmlPullParser.readChannel(link: String) = withinTag("channel") {
             else -> skip()
         }
     }
-    if (title != null && description != null) Podcast(title, description, link)
+    // TODO: populate episodes list
+    if (title != null && description != null)
+        Podcast(title, description, link, episodes)
     else throw ParseError(
         "one or more parameters are null: ($title, $description)"
     )

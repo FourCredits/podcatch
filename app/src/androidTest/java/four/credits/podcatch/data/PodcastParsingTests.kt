@@ -6,7 +6,7 @@ import org.junit.Assert.*
 
 class PodcastParsingTests {
     @Test
-    fun correctlyParsesFullFeed() {
+    fun correctlyParsesMultipleChannels() {
         val input = """
             <rss>
               <channel>
@@ -22,9 +22,11 @@ class PodcastParsingTests {
             </rss>
         """.trimIndent().byteInputStream()
         val result = parsePodcast(input, "https://example.com/top-level")
+        // TODO: make tests for feeds with non-zero episodes
+        // TODO: make tests for feeds with only one channel
         val expected = listOf(
-            Podcast("Podcast 1", "Foo", "https://example.com/top-level"),
-            Podcast("Podcast 2", "Bar", "https://example.com/top-level")
+            Podcast("Podcast 1", "Foo", "https://example.com/top-level", listOf()),
+            Podcast("Podcast 2", "Bar", "https://example.com/top-level", listOf())
         )
         assertEquals(expected, result)
     }
