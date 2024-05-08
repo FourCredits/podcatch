@@ -23,6 +23,7 @@ class AddPodcastViewModel(
     val result: StateFlow<Result> = _result
 
     fun searchUrl() {
+        if (url.value.isBlank()) return
         _result.update { Result.Loading }
         viewModelScope.launch {
             _result.update {
