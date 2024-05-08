@@ -68,7 +68,7 @@ private fun EpisodeDisplay(episode: Episode) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PodcastDetailsScreenPreview() {
     PodcatchTheme {
@@ -77,8 +77,20 @@ private fun PodcastDetailsScreenPreview() {
                 title = "My very important podcast",
                 description = "A podcast about android development",
                 link = "This shouldn't be visible",
-                // TODO: implement displaying podcasts
-                listOf(),
+                episodes = listOf(
+                    Episode(
+                        title = "Episode 1",
+                        description = "A cool description",
+                        link = "",
+                        id = 1,
+                    ),
+                    Episode(
+                        title = "Episode 2",
+                        description = "A cool description",
+                        link = "",
+                        id = 2,
+                    )
+                ),
             ),
             onDelete = {},
         )
