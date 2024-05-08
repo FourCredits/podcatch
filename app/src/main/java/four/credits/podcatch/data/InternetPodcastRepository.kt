@@ -46,8 +46,6 @@ class InternetPodcastRepository(
             podcastDao.getPodcastById(id),
             episodeDao.getEpisodesByPodcastId(id)
         ) { podcast, episodes ->
-            podcast
-                ?.toDomainModel()
-                ?.copy(episodes = episodes.map { it.toDomainModel() })
+            podcast?.toDomainModel(episodes.map { it.toDomainModel() })
         }
 }

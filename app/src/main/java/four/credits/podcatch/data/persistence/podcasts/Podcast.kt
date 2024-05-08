@@ -3,6 +3,7 @@ package four.credits.podcatch.data.persistence.podcasts
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import four.credits.podcatch.domain.Podcast as DomainPodcast
+import four.credits.podcatch.domain.Episode as DomainEpisode
 
 @Entity
 data class Podcast(
@@ -14,14 +15,9 @@ data class Podcast(
     val link: String,
 )
 
-// TODO: make way of passing proper episodes
-fun Podcast.toDomainModel() = DomainPodcast(
-    title,
-    description,
-    link,
-    episodes = listOf(),
-    id
-)
+fun Podcast.toDomainModel(
+    episodes: List<DomainEpisode> = listOf()
+) = DomainPodcast(title, description, link, episodes, id)
 
 fun DomainPodcast.toDatabaseModel(): Podcast =
     Podcast(id, title, description, link)
