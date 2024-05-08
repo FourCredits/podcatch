@@ -58,8 +58,7 @@ private fun ViewPodcastsScreenInner(
                 LocalSpacing.current.medium
             )
         ) {
-            // TODO: is keying off title alright?
-            items(podcasts, key = { it.title }) {
+            items(podcasts, key = { it.id }) {
                 PodcastDisplay(podcast = it, onPressed = onPodcastPressed)
             }
         }
