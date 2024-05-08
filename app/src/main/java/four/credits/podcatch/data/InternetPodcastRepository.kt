@@ -40,6 +40,7 @@ class InternetPodcastRepository(
         .map { podcasts -> podcasts.map { it.toDomainModel() } }
 
     // TODO: make a better way of querying this
+    //  (should surely be able to be one query)
     override fun getPodcastById(id: Long): Flow<Podcast?> =
         combine(
             podcastDao.getPodcastById(id),
