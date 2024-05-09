@@ -14,8 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import four.credits.podcatch.presentation.screens.add_podcast.AddPodcastScreen
-import four.credits.podcatch.presentation.screens.add_podcast.AddPodcastViewModel
+import four.credits.podcatch.presentation.screens.add_podcast.addPodcastScreen
+import four.credits.podcatch.presentation.screens.add_podcast.navigateToAddPodcast
 import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsScreen
 import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsViewModel
 import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsScreen
@@ -43,7 +43,6 @@ private fun Root() {
 }
 
 private const val ViewPodcastsRoute = "view_podcasts"
-private const val AddPodcastRoute = "add_podcast"
 private const val PodcastDetailsRoute = "podcast_details"
 
 @Composable
@@ -55,23 +54,14 @@ private fun NavRoot() {
                 viewModel<ViewPodcastsViewModel>(
                     factory = ViewPodcastsViewModel.Factory
                 ),
-                onAddPodcastPressed = {
-                    navController.navigate(AddPodcastRoute)
-                },
+                onAddPodcastPressed = navController::navigateToAddPodcast,
                 onPodcastPressed = { id ->
                     // TODO: do this in a more type safe manner
                     navController.navigate("$PodcastDetailsRoute/$id")
                 }
             )
         }
-        composable(AddPodcastRoute) {
-            AddPodcastScreen(
-                viewModel<AddPodcastViewModel>(
-                    factory = AddPodcastViewModel.Factory
-                ),
-                onNavigateUp = { navController.popBackStack() }
-            )
-        }
+        addPodcastScreen(onNavigateUp = navController::popBackStack)
         composable(
             "$PodcastDetailsRoute/{${PodcastDetailsViewModel.PODCAST_ID_ARG}}",
             arguments = listOf(
