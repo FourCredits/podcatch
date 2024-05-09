@@ -21,28 +21,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-@Composable
-fun ViewPodcastsScreen(
-    viewModel: ViewPodcastsViewModel,
-    onAddPodcastPressed: () -> Unit,
+fun NavGraphBuilder.viewPodcastsScreen(
+    onAddPressed: () -> Unit,
     onPodcastPressed: (Long) -> Unit,
-) {
-    val podcasts by viewModel.podcasts.collectAsStateWithLifecycle()
-    ViewPodcastsScreenInner(
+) = composable(ViewPodcastsRoute) {
+    val podcasts by viewModel<ViewPodcastsViewModel>(
+        factory = ViewPodcastsViewModel.Factory
+    ).podcasts.collectAsStateWithLifecycle()
+    ViewPodcastsScreen(
         podcasts,
-        onAddPodcastPressed = onAddPodcastPressed,
+        onAddPodcastPressed = onAddPressed,
         onPodcastPressed = onPodcastPressed,
     )
 }
 
+const val ViewPodcastsRoute = "view_podcasts"
+
 @Composable
-private fun ViewPodcastsScreenInner(
+private fun ViewPodcastsScreen(
     podcasts: List<Podcast>,
     onAddPodcastPressed: () -> Unit,
     onPodcastPressed: (Long) -> Unit,
@@ -116,6 +121,6 @@ private fun ViewPodcastsScreenPreview() {
         ),
     )
     PodcatchTheme {
-        ViewPodcastsScreenInner(podcasts, {}, {})
+        ViewPodcastsScreen(podcasts, {}, {})
     }
 }

@@ -42,7 +42,7 @@ make sure that someone can't add the same podcast twice
 *** TODO font sizes
 *** TODO coloring
 ** TODO make a way of showing a details screen for a podcast that hasn't been saved yet
-** DONE read up on some things [0/0]
+** DONE read up on some things [2/2]
 *** DONE Room basics
 [[https://developer.android.com/training/data-storage/room]]
 *** DONE Migrating Room databases

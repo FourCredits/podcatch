@@ -23,20 +23,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-@Composable
-fun AddPodcastScreen(
-    viewModel: AddPodcastViewModel,
+fun NavGraphBuilder.addPodcastScreen(
     onNavigateUp: () -> Unit
-) {
+) = composable(AddPodcastRoute) {
+    val viewModel =
+        viewModel<AddPodcastViewModel>(
+        factory = AddPodcastViewModel.Factory
+    )
     val url by viewModel.url.collectAsStateWithLifecycle()
     val result by viewModel.result.collectAsStateWithLifecycle()
-    AddPodcastInner(
+    AddPodcastScreen(
         url,
         setUrl = viewModel::setSearch,
         result,
@@ -49,8 +55,12 @@ fun AddPodcastScreen(
     )
 }
 
+fun NavController.navigateToAddPodcast() = navigate(AddPodcastRoute)
+
+private const val AddPodcastRoute = "add_podcast"
+
 @Composable
-private fun AddPodcastInner(
+private fun AddPodcastScreen(
     url: String,
     setUrl: (String) -> Unit,
     result: Result,
@@ -66,9 +76,11 @@ private fun AddPodcastInner(
             singleLine = true,
             trailingIcon = {
                 // TODO: what's the recommended spacing?
-                Row(horizontalArrangement = Arrangement.spacedBy(
-                    LocalSpacing.current.small
-                )) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(
+                        LocalSpacing.current.small
+                    )
+                ) {
                     Icon(
                         AppIcons.Clear,
                         stringResource(R.string.alt_clear_input),
@@ -109,17 +121,19 @@ private fun AddPodcastInner(
 private fun AddPodcastPreview() {
     var text by remember { mutableStateOf("https://www.example.com") }
     PodcatchTheme {
-        AddPodcastInner(
+        AddPodcastScreen(
             text,
             { text = it },
-            Result.Loaded(Podcast(
-                "My Podcast",
-                "A podcast where I talk about me",
-                "https://example.com/podcast",
-                // TODO: you should possibly be able to see a details screen for
-                //  a podcast you haven't necessarily saved
-                listOf(),
-            )),
+            Result.Loaded(
+                Podcast(
+                    "My Podcast",
+                    "A podcast where I talk about me",
+                    "https://example.com/podcast",
+                    // TODO: you should possibly be able to see a details screen for
+                    //  a podcast you haven't necessarily saved
+                    listOf(),
+                )
+            ),
             {},
             onClear = { text = "" },
             {},

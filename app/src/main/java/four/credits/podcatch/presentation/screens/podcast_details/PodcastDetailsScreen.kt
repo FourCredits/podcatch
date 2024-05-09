@@ -15,6 +15,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.Podcast
@@ -22,20 +28,28 @@ import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-@Composable
-fun PodcastDetailsScreen(
-    viewModel: PodcastDetailsViewModel,
-    onNavigateUp: () -> Unit,
+fun NavGraphBuilder.podcastDetailsScreen(onNavigateUp: () -> Unit) = composable(
+    "$PodcastDetailsRoute/{$IdArg}",
+    arguments = listOf(navArgument(IdArg) { type = NavType.LongType })
 ) {
+    val viewModel = viewModel<PodcastDetailsViewModel>(
+        factory = PodcastDetailsViewModel.Factory,
+    )
     val podcast by viewModel.podcast.collectAsStateWithLifecycle()
-    PodcastDetailsScreenInternal(podcast, onDelete = {
+    PodcastDetailsScreen(podcast, onDelete = {
         viewModel.delete()
         onNavigateUp()
     })
 }
 
+fun NavController.navigateToDetails(id: Long) =
+    navigate("$PodcastDetailsRoute/$id")
+
+private const val PodcastDetailsRoute = "podcast_details"
+internal const val IdArg = "podcastId"
+
 @Composable
-private fun PodcastDetailsScreenInternal(
+private fun PodcastDetailsScreen(
     podcast: Podcast,
     onDelete: () -> Unit,
 ) {
@@ -72,7 +86,7 @@ private fun EpisodeDisplay(episode: Episode) {
 @Composable
 private fun PodcastDetailsScreenPreview() {
     PodcatchTheme {
-        PodcastDetailsScreenInternal(
+        PodcastDetailsScreen(
             Podcast(
                 title = "My very important podcast",
                 description = "A podcast about android development",
