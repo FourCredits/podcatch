@@ -68,13 +68,20 @@ class PodcastParsingTests {
                 <description>Foo</description>
                 <item>
                   <title>Episode 1</title>
-                  <link>https://example.com/1/1</link>
                   <description>the description of the episode</description>
+                  <enclosure
+                    type="audio/mpeg"
+                    length="0"
+                    url="https://example.com/1/1" />
                 </item>
                 <item>
                   <title>Episode 2</title>
                   <link>https://example.com/1/2</link>
                   <description>the second description</description>
+                  <enclosure
+                    type="audio/mpeg"
+                    length="0"
+                    url="https://example.com/1/2" />
                 </item>
               </channel>
             </rss>
