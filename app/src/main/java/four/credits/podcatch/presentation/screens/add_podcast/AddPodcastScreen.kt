@@ -34,27 +34,25 @@ import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 fun NavGraphBuilder.addPodcastScreen(
-    onNavigateUp: () -> Unit,
-) {
-    composable(AddPodcastRoute) {
-        val viewModel =
-            viewModel<AddPodcastViewModel>(
-            factory = AddPodcastViewModel.Factory
-        )
-        val url by viewModel.url.collectAsStateWithLifecycle()
-        val result by viewModel.result.collectAsStateWithLifecycle()
-        AddPodcastScreen(
-            url,
-            setUrl = viewModel::setSearch,
-            result,
-            onSearch = viewModel::searchUrl,
-            onClear = viewModel::clearSearch,
-            onAdd = {
-                viewModel.addPodcast()
-                onNavigateUp()
-            }
-        )
-    }
+    onNavigateUp: () -> Unit
+) = composable(AddPodcastRoute) {
+    val viewModel =
+        viewModel<AddPodcastViewModel>(
+        factory = AddPodcastViewModel.Factory
+    )
+    val url by viewModel.url.collectAsStateWithLifecycle()
+    val result by viewModel.result.collectAsStateWithLifecycle()
+    AddPodcastScreen(
+        url,
+        setUrl = viewModel::setSearch,
+        result,
+        onSearch = viewModel::searchUrl,
+        onClear = viewModel::clearSearch,
+        onAdd = {
+            viewModel.addPodcast()
+            onNavigateUp()
+        }
+    )
 }
 
 fun NavController.navigateToAddPodcast() = navigate(AddPodcastRoute)
