@@ -18,8 +18,8 @@ import four.credits.podcatch.presentation.screens.add_podcast.addPodcastScreen
 import four.credits.podcatch.presentation.screens.add_podcast.navigateToAddPodcast
 import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsScreen
 import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsViewModel
-import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsScreen
-import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsViewModel
+import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsRoute
+import four.credits.podcatch.presentation.screens.view_podcasts.viewPodcastsScreen
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,25 +42,18 @@ private fun Root() {
     }
 }
 
-private const val ViewPodcastsRoute = "view_podcasts"
 private const val PodcastDetailsRoute = "podcast_details"
 
 @Composable
 private fun NavRoot() {
     val navController = rememberNavController()
     NavHost(navController, startDestination = ViewPodcastsRoute) {
-        composable(ViewPodcastsRoute) {
-            ViewPodcastsScreen(
-                viewModel<ViewPodcastsViewModel>(
-                    factory = ViewPodcastsViewModel.Factory
-                ),
-                onAddPodcastPressed = navController::navigateToAddPodcast,
-                onPodcastPressed = { id ->
-                    // TODO: do this in a more type safe manner
-                    navController.navigate("$PodcastDetailsRoute/$id")
-                }
-            )
-        }
+        viewPodcastsScreen(
+            onAddPressed = navController::navigateToAddPodcast,
+            onPodcastPressed = {
+                id -> navController.navigate("$PodcastDetailsRoute/$id")
+            }
+        )
         addPodcastScreen(onNavigateUp = navController::popBackStack)
         composable(
             "$PodcastDetailsRoute/{${PodcastDetailsViewModel.PODCAST_ID_ARG}}",
