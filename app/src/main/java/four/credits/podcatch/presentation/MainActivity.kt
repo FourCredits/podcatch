@@ -8,16 +8,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import four.credits.podcatch.presentation.screens.add_podcast.addPodcastScreen
 import four.credits.podcatch.presentation.screens.add_podcast.navigateToAddPodcast
-import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsScreen
-import four.credits.podcatch.presentation.screens.podcast_details.PodcastDetailsViewModel
+import four.credits.podcatch.presentation.screens.podcast_details.navigateToDetails
+import four.credits.podcatch.presentation.screens.podcast_details.podcastDetailsScreen
 import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsRoute
 import four.credits.podcatch.presentation.screens.view_podcasts.viewPodcastsScreen
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -31,18 +27,14 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-private fun Root() {
-    PodcatchTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            NavRoot()
-        }
+private fun Root() = PodcatchTheme {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        NavRoot()
     }
 }
-
-private const val PodcastDetailsRoute = "podcast_details"
 
 @Composable
 private fun NavRoot() {
@@ -50,25 +42,9 @@ private fun NavRoot() {
     NavHost(navController, startDestination = ViewPodcastsRoute) {
         viewPodcastsScreen(
             onAddPressed = navController::navigateToAddPodcast,
-            onPodcastPressed = {
-                id -> navController.navigate("$PodcastDetailsRoute/$id")
-            }
+            onPodcastPressed = navController::navigateToDetails
         )
         addPodcastScreen(onNavigateUp = navController::popBackStack)
-        composable(
-            "$PodcastDetailsRoute/{${PodcastDetailsViewModel.PODCAST_ID_ARG}}",
-            arguments = listOf(
-                navArgument(PodcastDetailsViewModel.PODCAST_ID_ARG) {
-                    type = NavType.LongType
-                }
-            )
-        ) {
-            PodcastDetailsScreen(
-                viewModel<PodcastDetailsViewModel>(
-                    factory = PodcastDetailsViewModel.Factory
-                ),
-                onNavigateUp = { navController.popBackStack() }
-            )
-        }
+        podcastDetailsScreen(onNavigateUp = navController::popBackStack)
     }
 }
