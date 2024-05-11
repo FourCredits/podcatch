@@ -1,5 +1,6 @@
 package four.credits.podcatch.presentation.screens.podcast_details
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -28,7 +30,10 @@ import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.LocalSpacing
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-fun NavGraphBuilder.podcastDetailsScreen(onNavigateUp: () -> Unit) = composable(
+fun NavGraphBuilder.podcastDetailsScreen(
+    onNavigateUp: () -> Unit,
+    onEpisodeClick: (Long) -> Unit,
+) = composable(
     "$PodcastDetailsRoute/{$IdArg}",
     arguments = listOf(navArgument(IdArg) { type = NavType.LongType })
 ) {
@@ -36,13 +41,17 @@ fun NavGraphBuilder.podcastDetailsScreen(onNavigateUp: () -> Unit) = composable(
         factory = PodcastDetailsViewModel.Factory,
     )
     val podcast by viewModel.podcast.collectAsStateWithLifecycle()
-    PodcastDetailsScreen(podcast, onDelete = {
-        viewModel.delete()
-        onNavigateUp()
-    })
+    PodcastDetailsScreen(
+        podcast,
+        onDelete = {
+            viewModel.delete()
+            onNavigateUp()
+        },
+        onEpisodeClick = onEpisodeClick
+    )
 }
 
-fun NavController.navigateToDetails(id: Long) =
+fun NavController.navigateToPodcast(id: Long) =
     navigate("$PodcastDetailsRoute/$id")
 
 private const val PodcastDetailsRoute = "podcast_details"
@@ -52,6 +61,7 @@ internal const val IdArg = "podcastId"
 private fun PodcastDetailsScreen(
     podcast: Podcast,
     onDelete: () -> Unit,
+    onEpisodeClick: (Long) -> Unit,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(LocalSpacing.current.medium)
@@ -63,19 +73,22 @@ private fun PodcastDetailsScreen(
             Text(podcast.description)
         }
         items(items = podcast.episodes, key = { it.id }) {
-            EpisodeDisplay(episode = it)
+            EpisodeDisplay(episode = it, onClick = { onEpisodeClick(it.id) })
         }
         item {
             IconButton(onClick = onDelete) {
-                Icon(AppIcons.Delete, stringResource(R.string.alt_delete_podcast))
+                Icon(
+                    AppIcons.Delete,
+                    stringResource(R.string.alt_delete_podcast)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun EpisodeDisplay(episode: Episode) {
-    Card {
+private fun EpisodeDisplay(episode: Episode, onClick: () -> Unit) {
+    Card(modifier = Modifier.clickable { onClick() }) {
         Text(episode.title, fontSize = 16.sp)
         HorizontalDivider()
         Text(episode.description)
@@ -107,6 +120,7 @@ private fun PodcastDetailsScreenPreview() {
                 ),
             ),
             onDelete = {},
+            onEpisodeClick = {},
         )
     }
 }

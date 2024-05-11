@@ -12,7 +12,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import four.credits.podcatch.presentation.screens.add_podcast.addPodcastScreen
 import four.credits.podcatch.presentation.screens.add_podcast.navigateToAddPodcast
-import four.credits.podcatch.presentation.screens.podcast_details.navigateToDetails
+import four.credits.podcatch.presentation.screens.episode_details.episodeDetailsScreen
+import four.credits.podcatch.presentation.screens.episode_details.navigateToEpisode
+import four.credits.podcatch.presentation.screens.podcast_details.navigateToPodcast
 import four.credits.podcatch.presentation.screens.podcast_details.podcastDetailsScreen
 import four.credits.podcatch.presentation.screens.view_podcasts.ViewPodcastsRoute
 import four.credits.podcatch.presentation.screens.view_podcasts.viewPodcastsScreen
@@ -42,9 +44,13 @@ private fun NavRoot() {
     NavHost(navController, startDestination = ViewPodcastsRoute) {
         viewPodcastsScreen(
             onAddPressed = navController::navigateToAddPodcast,
-            onPodcastPressed = navController::navigateToDetails
+            onPodcastPressed = navController::navigateToPodcast
         )
         addPodcastScreen(onNavigateUp = navController::popBackStack)
-        podcastDetailsScreen(onNavigateUp = navController::popBackStack)
+        podcastDetailsScreen(
+            onNavigateUp = navController::popBackStack,
+            onEpisodeClick = navController::navigateToEpisode
+        )
+        episodeDetailsScreen()
     }
 }
