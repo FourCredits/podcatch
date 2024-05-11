@@ -3,8 +3,9 @@
     <string name="alt_add_new_podcast">Add new podcast</string>
     <string name="alt_clear_input">Clear input</string>
     <string name="alt_search_for_podcast">Search for podcast</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="nothing_to_display_yet">Nothing to display yet</string>
     <string name="add_podcast">Add Podcast</string>
     <string name="alt_delete_podcast">Delete podcast</string>
+    <string name="download_episode">Download episode</string>
 </resources>
