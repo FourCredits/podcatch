@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,13 +92,10 @@ private fun EpisodeDetailsScreen(
 
 @Composable
 private fun RowScope.ProgressIndication(downloadState: InProgress) {
-    val downloaded = downloadState.downloadedBytes
-    val total = downloadState.totalBytes
-    CircularProgressIndicator(
-        progress = { downloaded.toFloat() / total.toFloat() }
-    )
-    // TODO: layout better so it looks nicer as values change
-    Text("$downloaded/$total")
+    val downloaded = downloadState.downloadedBytes.toFloat()
+    val total = downloadState.totalBytes.toFloat()
+    CircularProgressIndicator(progress = { downloaded / total })
+    Text("${((downloaded / total) * 100).toUInt()}%")
 }
 
 @Preview(showBackground = true)
