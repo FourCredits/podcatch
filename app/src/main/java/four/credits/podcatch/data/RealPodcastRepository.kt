@@ -1,5 +1,6 @@
 package four.credits.podcatch.data
 
+import android.content.Context
 import four.credits.podcatch.data.persistence.episodes.EpisodeDao
 import four.credits.podcatch.data.persistence.episodes.toDatabaseModel
 import four.credits.podcatch.data.persistence.podcasts.PodcastDao
@@ -10,13 +11,11 @@ import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.net.URL
 
-class InternetPodcastRepository(
+class RealPodcastRepository(
     private val podcastDao: PodcastDao,
     private val episodeDao: EpisodeDao,
 ) : PodcastRepository {

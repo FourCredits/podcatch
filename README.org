@@ -19,7 +19,8 @@ don't throw, at least
 *** TODO parse from xml
 *** TODO download
 probably involves using coil?
-** TODO download the episodes themselves
+** DONE download the episodes themselves
+   CLOSED: [2024-05-12 Sun 17:56]
 ** TODO enable playing podcasts
 ** TODO periodically check podcasts for updates
 ** DONE don't use =State= in =ViewModel=​s
@@ -38,7 +39,8 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 ** TODO parse =pubDate= to sort by release date
 ** TODO make podcasts unique in their url
 make sure that someone can't add the same podcast twice
-** TODO make episodes detail screen
+** DONE make episodes detail screen
+   CLOSED: [2024-05-11 Sat 21:42]
 ** TODO make things pretty [0/3]
 *** TODO spacing
 *** TODO font sizes
