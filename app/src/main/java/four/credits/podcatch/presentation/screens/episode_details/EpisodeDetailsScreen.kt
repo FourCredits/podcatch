@@ -30,7 +30,6 @@ import four.credits.podcatch.R
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-// TODO: add download logic here
 fun NavGraphBuilder.episodeDetailsScreen() = composable(
     "$EpisodeDetailsRoute/{$IdArg}",
     arguments = listOf(navArgument(IdArg) { type = NavType.LongType })
@@ -63,8 +62,7 @@ private fun EpisodeDetailsScreen(
         // TODO: don't hardcode font sizes
         Text(text = episode.title, fontSize = 24.sp)
         HorizontalDivider()
-        Text(text = episode.description)
-        Box(modifier = Modifier.weight(1f))
+        Text(text = episode.description, modifier = Modifier.weight(1f))
         HorizontalDivider()
         Row(
             horizontalArrangement = Arrangement.SpaceAround,
