@@ -2,7 +2,7 @@ package four.credits.podcatch
 
 import android.app.Application
 import androidx.room.Room
-import four.credits.podcatch.data.DbEpisodeRepository
+import four.credits.podcatch.data.RealEpisodeRepository
 import four.credits.podcatch.data.RealPodcastRepository
 import four.credits.podcatch.data.persistence.PodcastDatabase
 import four.credits.podcatch.domain.EpisodeRepository
@@ -22,6 +22,6 @@ class PodcatchApplication : Application() {
     }
 
     val episodeRepository: EpisodeRepository by lazy {
-        DbEpisodeRepository(database.episodeDao)
+        RealEpisodeRepository(this, database.episodeDao)
     }
 }
