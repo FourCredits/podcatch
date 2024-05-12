@@ -48,6 +48,7 @@ class EpisodeDetailsViewModel(
     }
 
     fun downloadEpisode() = viewModelScope.launch {
+        if (episode.value.downloaded) return@launch
         repository.downloadEpisode(
             episode = episode.value,
             onProgressUpdate = { downloaded, total ->
