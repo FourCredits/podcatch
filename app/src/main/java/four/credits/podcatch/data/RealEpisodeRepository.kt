@@ -26,6 +26,7 @@ class RealEpisodeRepository(
             context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS),
             "episodes${File.separatorChar}${episode.id}.mp3"
         )
+        file.parentFile?.mkdirs()
         downloadFile(
             from = episode.link,
             to = file.absolutePath,
