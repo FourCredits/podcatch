@@ -6,9 +6,12 @@ import four.credits.podcatch.data.persistence.episodes.EpisodeDao
 import four.credits.podcatch.data.persistence.episodes.toDatabaseModel
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.EpisodeRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 class RealEpisodeRepository(
     private val context: Context,
@@ -21,19 +24,32 @@ class RealEpisodeRepository(
         episode: Episode,
         onProgressUpdate: ((Long, Long) -> Unit)?,
     ) {
-        // TODO: extract getting episode file path to a common function
-        val file = File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS),
-            "episodes${File.separatorChar}${episode.id}.mp3"
-        )
-        file.parentFile?.mkdirs()
-        downloadFile(
-            from = episode.link,
-            to = file.absolutePath,
-            onProgressUpdate
-        )
+        withContext(Dispatchers.IO) {
+            val file = episode.fileLocation(context)
+            file.parentFile?.mkdirs()
+            downloadFile(
+                from = episode.link,
+                to = file.absolutePath,
+                onProgressUpdate
+            )
+        }
         episodeDao.upsertEpisode(
             episode.copy(downloaded = true).toDatabaseModel()
         )
     }
+
+    override suspend fun deleteDownload(episode: Episode) {
+        withContext(Dispatchers.IO) {
+            if (!episode.fileLocation(context).delete())
+                throw IOException("couldn't delete file")
+        }
+        episodeDao.upsertEpisode(
+            episode.copy(downloaded = false).toDatabaseModel()
+        )
+    }
 }
+
+private fun Episode.fileLocation(context: Context): File = File(
+    context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS),
+    "episodes${File.separatorChar}$id.mp3"
+)

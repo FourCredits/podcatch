@@ -59,6 +59,11 @@ class EpisodeDetailsViewModel(
         )
     }
 
+    fun deleteEpisode() = viewModelScope.launch {
+        if (!episode.value.downloaded) return@launch
+        repository.deleteDownload(episode = episode.value)
+    }
+
     companion object {
         val loading = Episode("loading...", "loading...", "loading...")
 

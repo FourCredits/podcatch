@@ -1,10 +1,10 @@
 package four.credits.podcatch.presentation.screens.episode_details
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import four.credits.podcatch.R
 import four.credits.podcatch.domain.Episode
+import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 fun NavGraphBuilder.episodeDetailsScreen() = composable(
@@ -41,11 +42,13 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
     EpisodeDetailsScreen(
         episode,
         downloadState,
-        viewModel::downloadEpisode
+        viewModel::downloadEpisode,
+        viewModel::deleteEpisode,
     )
 }
 
-fun NavController.navigateToEpisode(id: Long) = navigate("$EpisodeDetailsRoute/$id")
+fun NavController.navigateToEpisode(id: Long) =
+    navigate("$EpisodeDetailsRoute/$id")
 
 private const val EpisodeDetailsRoute = "episode_details"
 internal const val IdArg = "episodeId"
@@ -56,6 +59,7 @@ private fun EpisodeDetailsScreen(
     episode: Episode,
     downloadState: DownloadState,
     onDownload: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     Column {
         // TODO: don't hardcode font sizes
@@ -63,39 +67,78 @@ private fun EpisodeDetailsScreen(
         HorizontalDivider()
         Text(text = episode.description, modifier = Modifier.weight(1f))
         HorizontalDivider()
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            when (downloadState) {
-                Downloaded -> {
-                    Icon(
-                        painterResource(R.drawable.download_done),
-                        stringResource(R.string.download_completed)
-                    )
-                    // TODO: option to delete the downloaded file
-                }
-                is InProgress -> {
-                    ProgressIndication(downloadState)
-                    // TODO: option to cancel a download partway through
-                }
-                NotDownloaded -> IconButton(onClick = onDownload) {
-                    Icon(
-                        painterResource(R.drawable.download),
-                        stringResource(R.string.download_episode)
-                    )
-                }
+        BottomPanel(downloadState, onDelete, onDownload)
+    }
+}
+
+@Composable
+private fun BottomPanel(
+    downloadState: DownloadState,
+    onDelete: () -> Unit,
+    onDownload: () -> Unit
+) = Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.SpaceAround,
+    verticalAlignment = Alignment.CenterVertically,
+) {
+    when (downloadState) {
+        Downloaded -> {
+            Icon(
+                painterResource(R.drawable.download_done),
+                stringResource(R.string.download_completed)
+            )
+            IconButton(onClick = onDelete) {
+                Icon(
+                    AppIcons.Delete,
+                    stringResource(R.string.delete_episode)
+                )
             }
+        }
+
+        is InProgress -> {
+            ProgressIndication(downloadState)
+            // TODO: option to cancel a download partway through
+        }
+
+        NotDownloaded -> IconButton(onClick = onDownload) {
+            Icon(
+                painterResource(R.drawable.download),
+                stringResource(R.string.download_episode)
+            )
         }
     }
 }
 
 @Composable
-private fun RowScope.ProgressIndication(downloadState: InProgress) {
+private fun ProgressIndication(downloadState: InProgress) {
     val downloaded = downloadState.downloadedBytes.toFloat()
     val total = downloadState.totalBytes.toFloat()
-    CircularProgressIndicator(progress = { downloaded / total })
-    Text("${((downloaded / total) * 100).toUInt()}%")
+    Row {
+        CircularProgressIndicator(progress = { downloaded / total })
+        Text("${((downloaded / total) * 100).toUInt()}%")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomPanelPreview() = PodcatchTheme {
+    Column {
+        BottomPanel(
+            downloadState = Downloaded,
+            onDelete = {},
+            onDownload = {}
+        )
+        BottomPanel(
+            downloadState = NotDownloaded,
+            onDelete = {},
+            onDownload = {}
+        )
+        BottomPanel(
+            downloadState = InProgress(2345, 7652),
+            onDelete = {},
+            onDownload = {}
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -110,6 +153,7 @@ private fun EpisodeDetailsScreenPreview() {
             ),
             downloadState = InProgress(25, 100),
             onDownload = {},
+            onDelete = {},
         )
     }
 }
