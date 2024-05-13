@@ -7,6 +7,7 @@ still very much a work in progress
 ** DONE don't hardcode alt text
 ** DONE don't hardcode padding/spacing
 ** TODO don't allow adding multiple of the same podcast
+probably the key is to make podcasts unique in their url. i'm not sure if that means that the primary index of a podcast should be its url, though - that seems a little suspect.
 ** DONE allow deletion of podcasts
 ** TODO add button to insert link from clipboard
 ** TODO improve xml parsing code
@@ -37,8 +38,6 @@ I'm imagining making the thumbnail animate from the view podcasts screen to the 
 Following the advice detailed [[https://developer.android.com/guide/navigation/design/type-safety#navigate-destination][here]]
 *** TODO Make extension methods for navigating to particular screens
 ** TODO parse =pubDate= to sort by release date
-** TODO make podcasts unique in their url
-make sure that someone can't add the same podcast twice
 ** DONE make episodes detail screen
    CLOSED: [2024-05-11 Sat 21:42]
 ** TODO make things pretty [0/3]
