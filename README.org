@@ -23,7 +23,7 @@ don't throw, at least
 probably involves using coil?
 ** DONE download the episodes themselves
    CLOSED: [2024-05-12 Sun 17:56]
-** TODO enable playing podcasts
+** PROGRESS enable playing podcasts
 ** TODO periodically check podcasts for updates
 ** DONE don't use =State= in =ViewModel=​s
 not really sure about this one, frankly - =StateFlow=​s seem to behave better with flows like from a database, but =State= is simpler in other cases
