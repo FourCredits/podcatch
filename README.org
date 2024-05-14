@@ -55,3 +55,4 @@ make sure that someone can't add the same podcast twice
 *** link
 [[https://github.com/android/compose-samples/tree/main/Jetcaster][compose-samples/Jetcaster]]
 *** only for when i'm happy with mine, or really stuck
+** TODO delete downloads when you delete an episode or podcast
