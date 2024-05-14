@@ -1,5 +1,9 @@
 package four.credits.podcatch.presentation.screens.add_podcast
 
+import android.content.ClipDescription
+import android.content.ClipboardManager
+import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +24,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.getSystemService
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -42,6 +49,7 @@ fun NavGraphBuilder.addPodcastScreen(
     )
     val url by viewModel.url.collectAsStateWithLifecycle()
     val result by viewModel.result.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     AddPodcastScreen(
         url,
         setUrl = viewModel::setSearch,
@@ -51,6 +59,10 @@ fun NavGraphBuilder.addPodcastScreen(
         onAdd = {
             viewModel.addPodcast()
             onNavigateUp()
+        },
+        onPaste = {
+            viewModel.setSearch(pasteFromClipboard(context).toString())
+            viewModel.searchUrl()
         }
     )
 }
@@ -67,35 +79,17 @@ private fun AddPodcastScreen(
     onSearch: () -> Unit,
     onClear: () -> Unit,
     onAdd: () -> Unit,
+    onPaste: () -> Unit,
 ) {
     Column {
         OutlinedTextField(
             value = url,
             onValueChange = setUrl,
-            label = { Text("Enter the url to use") },
+            label = { Text(stringResource(R.string.enter_the_url_to_use)) },
             singleLine = true,
-            trailingIcon = {
-                // TODO: what's the recommended spacing?
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(
-                        LocalSpacing.current.small
-                    )
-                ) {
-                    Icon(
-                        AppIcons.Clear,
-                        stringResource(R.string.alt_clear_input),
-                        modifier = Modifier.clickable { onClear() }
-                    )
-                    Icon(
-                        imageVector = AppIcons.Search,
-                        stringResource(R.string.alt_search_for_podcast),
-                        modifier = Modifier.clickable { onSearch() }
-                    )
-                }
-            },
+            trailingIcon = { SearchButtons(onPaste, onClear, onSearch) },
             modifier = Modifier.fillMaxWidth(),
         )
-        // TODO: add option to insert from clipboard
         when (result) {
             Result.Loading -> Text(stringResource(R.string.loading))
             Result.Nothing -> Text(
@@ -115,6 +109,47 @@ private fun AddPodcastScreen(
         }
     }
 }
+
+@Composable
+private fun SearchButtons(
+    onPaste: () -> Unit,
+    onClear: () -> Unit,
+    onSearch: () -> Unit,
+) = Row(
+    horizontalArrangement = Arrangement.spacedBy(LocalSpacing.current.medium)
+) {
+    Icon(
+        painterResource(id = R.drawable.paste),
+        stringResource(R.string.paste_from_clipboard),
+        modifier = Modifier.clickable { onPaste() }
+    )
+    Icon(
+        AppIcons.Clear,
+        stringResource(R.string.alt_clear_input),
+        modifier = Modifier.clickable { onClear() }
+    )
+    Icon(
+        imageVector = AppIcons.Search,
+        stringResource(R.string.alt_search_for_podcast),
+        modifier = Modifier.clickable { onSearch() }
+    )
+}
+
+private fun pasteFromClipboard(context: Context): CharSequence? {
+    val clipboard = context.getSystemService<ClipboardManager>() ?: return null
+    val hasPrimaryClip = clipboard.hasPrimaryClip()
+    val isPlainText = clipboard
+        .primaryClipDescription
+        ?.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+    if (!hasPrimaryClip || isPlainText != true) return null
+    val item = clipboard.primaryClip?.getItemAt(0)
+    return item?.text ?: item?.uri?.resolve(context)
+}
+
+fun Uri.resolve(context: Context) = context
+    .contentResolver
+    .openInputStream(this)
+    ?.use { it.bufferedReader().readText() }
 
 @Preview(showBackground = true)
 @Composable
@@ -136,6 +171,7 @@ private fun AddPodcastPreview() {
             ),
             {},
             onClear = { text = "" },
+            {},
             {},
         )
     }

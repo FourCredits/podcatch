@@ -10,4 +10,6 @@
     <string name="download_episode">Download episode</string>
     <string name="download_completed">Download completed</string>
     <string name="delete_episode">delete episode</string>
+    <string name="paste_from_clipboard">Paste from clipboard</string>
+    <string name="enter_the_url_to_use">Enter the url to use</string>
 </resources>
