@@ -74,6 +74,9 @@ dependencies {
     ksp(libs.androidx.room.room.compiler)
     implementation(libs.androidx.room.ktx)
     testImplementation(libs.androidx.room.testing)
+
+    // exoplayer
+    implementation(libs.bundles.exoplayer)
 }
 
 room {
