@@ -1,6 +1,7 @@
 package four.credits.podcatch
 
 import android.app.Application
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import four.credits.podcatch.data.DownloadManager
 import four.credits.podcatch.data.RealEpisodeRepository
@@ -25,5 +26,19 @@ class PodcatchApplication : Application() {
     val episodeRepository: EpisodeRepository by lazy {
         val downloadManager = DownloadManager(this)
         RealEpisodeRepository(downloadManager, database.episodeDao)
+    }
+
+    val player by lazy {
+        ExoPlayer.Builder(this).build()
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        player.prepare()
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        player.release()
     }
 }

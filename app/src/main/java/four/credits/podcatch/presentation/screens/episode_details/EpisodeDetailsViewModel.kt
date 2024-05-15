@@ -8,6 +8,8 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import four.credits.podcatch.PodcatchApplication
 import four.credits.podcatch.domain.DownloadProgress
 import four.credits.podcatch.domain.Episode
@@ -29,6 +31,7 @@ import kotlinx.coroutines.launch
 class EpisodeDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: EpisodeRepository,
+    private val player: ExoPlayer,
 ) : ViewModel() {
     val episode = savedStateHandle.getStateFlow(IdArg, 0L)
         .flatMapLatest(repository::getEpisodeById)
@@ -40,12 +43,12 @@ class EpisodeDetailsViewModel(
 
     init {
         viewModelScope.launch {
-            episode.map { it.isDownloaded() }.collect(_downloadState)
+            episode.map(::isDownloaded).collect(_downloadState)
         }
     }
 
-    private fun Episode.isDownloaded() =
-        if (downloaded) Downloaded else NotDownloaded
+    private fun isDownloaded(episode: Episode) =
+        if (episode.downloaded) Downloaded(NotStarted) else NotDownloaded
 
     fun downloadEpisode() = viewModelScope.launch {
         if (!episode.value.downloaded)
@@ -59,15 +62,36 @@ class EpisodeDetailsViewModel(
             repository.deleteDownload(episode = episode.value)
     }
 
+    fun playEpisode() {
+        val downloaded = downloadState.value
+        if (downloaded !is Downloaded || downloaded.playState is Playing) return
+        if (downloaded.playState is NotStarted) {
+            val uri = repository.getEpisodeUri(episode.value) ?: return
+            player.setMediaItem(MediaItem.fromUri(uri))
+        }
+        player.play()
+        viewModelScope.launch { _downloadState.emit(Downloaded(Playing)) }
+    }
+
+    fun pauseEpisode() {
+        val downloaded = downloadState.value
+        if (downloaded is Downloaded && downloaded.playState is Playing) {
+            player.pause()
+            viewModelScope.launch { _downloadState.emit(Downloaded(Paused)) }
+        }
+    }
+
     companion object {
         val loading = Episode("loading...", "loading...", "loading...")
 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as PodcatchApplication
-                val repository = application.episodeRepository
-                val savedStateHandle = createSavedStateHandle()
-                EpisodeDetailsViewModel(savedStateHandle, repository)
+                EpisodeDetailsViewModel(
+                    createSavedStateHandle(),
+                    application.episodeRepository,
+                    application.player,
+                )
             }
         }
     }
@@ -75,5 +99,11 @@ class EpisodeDetailsViewModel(
 
 sealed interface DownloadState
 data object NotDownloaded : DownloadState
-data object Downloaded : DownloadState
+data class Downloaded(val playState: PlayState) : DownloadState
 data class InProgress(val downloadProgress: DownloadProgress) : DownloadState
+
+
+sealed interface PlayState
+data object NotStarted : PlayState
+data object Playing : PlayState
+data object Paused : PlayState
