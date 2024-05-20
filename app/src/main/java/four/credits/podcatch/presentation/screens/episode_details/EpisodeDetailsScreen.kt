@@ -26,6 +26,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import four.credits.podcatch.R
+import four.credits.podcatch.domain.DownloadProgress
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.PodcatchTheme
@@ -111,11 +112,10 @@ private fun BottomPanel(
 
 @Composable
 private fun ProgressIndication(downloadState: InProgress) {
-    val downloaded = downloadState.downloadedBytes.toFloat()
-    val total = downloadState.totalBytes.toFloat()
+    val amount = downloadState.downloadProgress.amountDownloaded()
     Row {
-        CircularProgressIndicator(progress = { downloaded / total })
-        Text("${((downloaded / total) * 100).toUInt()}%")
+        CircularProgressIndicator(progress = { amount })
+        Text("${(amount * 100).toUInt()}%")
     }
 }
 
@@ -134,7 +134,7 @@ private fun BottomPanelPreview() = PodcatchTheme {
             onDownload = {}
         )
         BottomPanel(
-            downloadState = InProgress(2345, 7652),
+            downloadState = InProgress(DownloadProgress(2345, 7652)),
             onDelete = {},
             onDownload = {}
         )
@@ -151,7 +151,7 @@ private fun EpisodeDetailsScreenPreview() {
                 "A description for the episode",
                 "shouldn't be shown",
             ),
-            downloadState = InProgress(25, 100),
+            downloadState = InProgress(DownloadProgress(25, 100)),
             onDownload = {},
             onDelete = {},
         )
