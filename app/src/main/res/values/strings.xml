@@ -12,4 +12,6 @@
     <string name="delete_episode">delete episode</string>
     <string name="paste_from_clipboard">Paste from clipboard</string>
     <string name="enter_the_url_to_use">Enter the url to use</string>
+    <string name="pause_podcast">Pause podcast</string>
+    <string name="play_podcast">Play podcast</string>
 </resources>

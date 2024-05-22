@@ -101,17 +101,17 @@ private fun BottomPanel(
                 painterResource(R.drawable.download_done),
                 stringResource(R.string.download_completed)
             )
-            val isPlaying = downloadState.playState is Playing
+            val isPlaying = downloadState.playing
             IconButton(onClick = { if (isPlaying) onPause() else onPlay() }) {
                 if (isPlaying) {
                     Icon(
                         painterResource(id = R.drawable.pause),
-                        "Pause podcast",
+                        stringResource(R.string.pause_podcast),
                     )
                 } else {
                     Icon(
                         AppIcons.PlayArrow,
-                        "Play podcast",
+                        stringResource(R.string.play_podcast),
                     )
 
                 }
@@ -152,21 +152,14 @@ private fun ProgressIndication(downloadState: InProgress) {
 private fun BottomPanelPreview() = PodcatchTheme {
     Column {
         BottomPanel(
-            downloadState = Downloaded(Playing),
+            downloadState = Downloaded(true),
             onDelete = {},
             onDownload = {},
             onPlay = {},
             onPause = {},
         )
         BottomPanel(
-            downloadState = Downloaded(Paused),
-            onDelete = {},
-            onDownload = {},
-            onPlay = {},
-            onPause = {},
-        )
-        BottomPanel(
-            downloadState = Downloaded(NotStarted),
+            downloadState = Downloaded(false),
             onDelete = {},
             onDownload = {},
             onPlay = {},
