@@ -23,7 +23,8 @@ don't throw, at least
 probably involves using coil?
 ** DONE download the episodes themselves
    CLOSED: [2024-05-12 Sun 17:56]
-** TODO enable playing podcasts
+** DONE enable playing podcasts
+   CLOSED: [2024-05-15 Wed 21:14]
 ** TODO periodically check podcasts for updates
 ** DONE don't use =State= in =ViewModel=​s
 not really sure about this one, frankly - =StateFlow=​s seem to behave better with flows like from a database, but =State= is simpler in other cases
@@ -56,9 +57,13 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 [[https://github.com/android/compose-samples/tree/main/Jetcaster][compose-samples/Jetcaster]]
 *** only for when i'm happy with mine, or really stuck
 ** TODO try using dash
-** TODO extract podcast playing code into a separate part to allow for various things
-*** TODO user should be able to navigate away from the episode details screen and come back, and have it still playing
-*** TODO user should be able to pause/play the current podcast without going to the details screen
-*** TODO podcasts should keep playing even after the app is closed
-*** TODO you should be able to control playback from a widget in your notification menu
-*** TODO you should be able to control playback from a widget on your homescreen
+** DONE extract podcast playing code into a separate part
+   CLOSED: [2024-05-23 Thu 08:37]
+*** DONE user should be able to navigate away from the episode details screen and come back, and have it still playing
+    CLOSED: [2024-05-23 Thu 08:37]
+** TODO user should be able to pause/play the current podcast without going to the details screen
+** TODO podcasts should keep playing even after the app is closed
+** TODO you should be able to control playback from a widget in your notification menu
+** TODO you should be able to control playback from a widget on your homescreen
+** TODO try downloading via exoplayer's built-in mechanisms for it
+** TODO make a way to cancel downloads

@@ -1,19 +1,13 @@
 package four.credits.podcatch.data
 
-import android.content.Context
-import android.os.Environment
 import four.credits.podcatch.data.persistence.episodes.EpisodeDao
 import four.credits.podcatch.data.persistence.episodes.toDatabaseModel
 import four.credits.podcatch.domain.DownloadProgress
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.EpisodeRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
 
 class RealEpisodeRepository(
     private val downloadManager: DownloadManager,
@@ -35,4 +29,7 @@ class RealEpisodeRepository(
             episode.copy(downloaded = false).toDatabaseModel()
         )
     }
+
+    override fun getEpisodeUri(episode: Episode): String? =
+        downloadManager.getDownload(episode)
 }

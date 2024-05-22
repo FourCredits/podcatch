@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -45,6 +46,8 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
         downloadState,
         viewModel::downloadEpisode,
         viewModel::deleteEpisode,
+        viewModel::playEpisode,
+        viewModel::pauseEpisode,
     )
 }
 
@@ -61,6 +64,8 @@ private fun EpisodeDetailsScreen(
     downloadState: DownloadState,
     onDownload: () -> Unit,
     onDelete: () -> Unit,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
 ) {
     Column {
         // TODO: don't hardcode font sizes
@@ -68,7 +73,13 @@ private fun EpisodeDetailsScreen(
         HorizontalDivider()
         Text(text = episode.description, modifier = Modifier.weight(1f))
         HorizontalDivider()
-        BottomPanel(downloadState, onDelete, onDownload)
+        BottomPanel(
+            downloadState,
+            onDelete,
+            onDownload,
+            onPlay,
+            onPause
+        )
     }
 }
 
@@ -76,18 +87,35 @@ private fun EpisodeDetailsScreen(
 private fun BottomPanel(
     downloadState: DownloadState,
     onDelete: () -> Unit,
-    onDownload: () -> Unit
+    onDownload: () -> Unit,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
 ) = Row(
     modifier = Modifier.fillMaxWidth(),
     horizontalArrangement = Arrangement.SpaceAround,
     verticalAlignment = Alignment.CenterVertically,
 ) {
     when (downloadState) {
-        Downloaded -> {
+        is Downloaded -> {
             Icon(
                 painterResource(R.drawable.download_done),
                 stringResource(R.string.download_completed)
             )
+            val isPlaying = downloadState.playing
+            IconButton(onClick = { if (isPlaying) onPause() else onPlay() }) {
+                if (isPlaying) {
+                    Icon(
+                        painterResource(id = R.drawable.pause),
+                        stringResource(R.string.pause_podcast),
+                    )
+                } else {
+                    Icon(
+                        AppIcons.PlayArrow,
+                        stringResource(R.string.play_podcast),
+                    )
+
+                }
+            }
             IconButton(onClick = onDelete) {
                 Icon(
                     AppIcons.Delete,
@@ -124,19 +152,32 @@ private fun ProgressIndication(downloadState: InProgress) {
 private fun BottomPanelPreview() = PodcatchTheme {
     Column {
         BottomPanel(
-            downloadState = Downloaded,
+            downloadState = Downloaded(true),
             onDelete = {},
-            onDownload = {}
+            onDownload = {},
+            onPlay = {},
+            onPause = {},
+        )
+        BottomPanel(
+            downloadState = Downloaded(false),
+            onDelete = {},
+            onDownload = {},
+            onPlay = {},
+            onPause = {},
         )
         BottomPanel(
             downloadState = NotDownloaded,
             onDelete = {},
-            onDownload = {}
+            onDownload = {},
+            onPlay = {},
+            onPause = {},
         )
         BottomPanel(
             downloadState = InProgress(DownloadProgress(2345, 7652)),
             onDelete = {},
-            onDownload = {}
+            onDownload = {},
+            onPlay = {},
+            onPause = {},
         )
     }
 }
@@ -154,6 +195,8 @@ private fun EpisodeDetailsScreenPreview() {
             downloadState = InProgress(DownloadProgress(25, 100)),
             onDownload = {},
             onDelete = {},
+            onPlay = {},
+            onPause = {},
         )
     }
 }

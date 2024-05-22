@@ -8,4 +8,6 @@ interface EpisodeRepository {
     fun downloadEpisode(episode: Episode): Flow<DownloadProgress>
 
     suspend fun deleteDownload(episode: Episode)
+
+    fun getEpisodeUri(episode: Episode): String?
 }

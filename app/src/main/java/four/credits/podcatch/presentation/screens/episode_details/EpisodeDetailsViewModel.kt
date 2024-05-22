@@ -12,16 +12,14 @@ import four.credits.podcatch.PodcatchApplication
 import four.credits.podcatch.domain.DownloadProgress
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.EpisodeRepository
+import four.credits.podcatch.domain.PlayManager
+import four.credits.podcatch.domain.PlayState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -29,34 +27,55 @@ import kotlinx.coroutines.launch
 class EpisodeDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: EpisodeRepository,
+    private val playManager: PlayManager,
 ) : ViewModel() {
-    val episode = savedStateHandle.getStateFlow(IdArg, 0L)
+    private val id = savedStateHandle.getStateFlow(IdArg, 0L)
+    val episode = id
         .flatMapLatest(repository::getEpisodeById)
         .filterIsInstance<Episode>()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), loading)
 
-    private val _downloadState = MutableStateFlow<DownloadState>(NotDownloaded)
-    val downloadState = _downloadState.asStateFlow()
+    private val _downloadProgress = MutableStateFlow<DownloadProgress?>(null)
 
-    init {
+    val downloadState = combine(
+        _downloadProgress,
+        playManager.currentlyPlaying(),
+        episode,
+        ::determineDownloadState
+    ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(), NotDownloaded)
+
+    private fun determineDownloadState(
+        downloadProgress: DownloadProgress?,
+        playState: PlayState,
+        episode: Episode,
+    ): DownloadState = when {
+        episode.downloaded -> Downloaded(playState is PlayState.Playing && playState.playingId == episode.id)
+        downloadProgress?.isComplete() == false -> InProgress(downloadProgress)
+        else -> NotDownloaded
+    }
+
+    fun downloadEpisode() {
+        val ep = episode.value.apply { if (downloaded) return }
         viewModelScope.launch {
-            episode.map { it.isDownloaded() }.collect(_downloadState)
+            repository.downloadEpisode(ep).collect(_downloadProgress)
         }
     }
 
-    private fun Episode.isDownloaded() =
-        if (downloaded) Downloaded else NotDownloaded
-
-    fun downloadEpisode() = viewModelScope.launch {
-        if (!episode.value.downloaded)
-            repository.downloadEpisode(episode.value).collect {
-                _downloadState.emit(InProgress(it))
-            }
+    fun deleteEpisode() {
+        val ep = episode.value.apply { if (downloaded) return }
+        viewModelScope.launch { repository.deleteDownload(ep) }
     }
 
-    fun deleteEpisode() = viewModelScope.launch {
-        if (episode.value.downloaded)
-            repository.deleteDownload(episode = episode.value)
+    fun playEpisode() {
+        // TODO: should i add the below line back?
+        // if (downloadState.value !is Downloaded) return
+        val ep = episode.value
+        val uri = repository.getEpisodeUri(ep) ?: return
+        viewModelScope.launch { playManager.play(ep.id, uri) }
+    }
+
+    fun pauseEpisode() {
+        viewModelScope.launch { playManager.pause() }
     }
 
     companion object {
@@ -65,9 +84,11 @@ class EpisodeDetailsViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[APPLICATION_KEY] as PodcatchApplication
-                val repository = application.episodeRepository
-                val savedStateHandle = createSavedStateHandle()
-                EpisodeDetailsViewModel(savedStateHandle, repository)
+                EpisodeDetailsViewModel(
+                    createSavedStateHandle(),
+                    application.episodeRepository,
+                    application.playManager,
+                )
             }
         }
     }
@@ -75,5 +96,5 @@ class EpisodeDetailsViewModel(
 
 sealed interface DownloadState
 data object NotDownloaded : DownloadState
-data object Downloaded : DownloadState
+data class Downloaded(val playing: Boolean) : DownloadState
 data class InProgress(val downloadProgress: DownloadProgress) : DownloadState
