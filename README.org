@@ -56,14 +56,17 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 *** link
 [[https://github.com/android/compose-samples/tree/main/Jetcaster][compose-samples/Jetcaster]]
 *** only for when i'm happy with mine, or really stuck
-** TODO try using dash
+** CANCELLED try using dash
+   CLOSED: [2024-05-26 Sun 17:44]
 ** DONE extract podcast playing code into a separate part
    CLOSED: [2024-05-23 Thu 08:37]
 *** DONE user should be able to navigate away from the episode details screen and come back, and have it still playing
     CLOSED: [2024-05-23 Thu 08:37]
 ** TODO user should be able to pause/play the current podcast without going to the details screen
-** TODO podcasts should keep playing even after the app is closed
+** DONE podcasts should keep playing even after the app is closed
+   CLOSED: [2024-05-26 Sun 17:44]
 ** TODO you should be able to control playback from a widget in your notification menu
 ** TODO you should be able to control playback from a widget on your homescreen
 ** TODO try downloading via exoplayer's built-in mechanisms for it
 ** TODO make a way to cancel downloads
+** TODO request permissions correctly

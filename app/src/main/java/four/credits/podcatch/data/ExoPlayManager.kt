@@ -17,6 +17,13 @@ class ExoPlayManager(private val player: ExoPlayer): PlayManager {
         currentlyPlaying.value.takeIf { it.playingId != id }?.run {
             player.setMediaItem(MediaItem.fromUri(uri))
         }
+        playInternal(id)
+    }
+
+    override suspend fun playCurrent() =
+        currentlyPlaying.value.playingId?.let { playInternal(it) } ?: Unit
+
+    private suspend fun playInternal(id: Long) {
         player.play()
         currentlyPlaying.emit(PlayState.Playing(id))
     }
