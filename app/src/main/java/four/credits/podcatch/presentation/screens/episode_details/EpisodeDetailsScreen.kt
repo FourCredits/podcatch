@@ -115,12 +115,12 @@ private fun BottomPanel(
                 if (isPlaying) {
                     Icon(
                         painterResource(id = R.drawable.pause),
-                        stringResource(R.string.pause_podcast),
+                        stringResource(R.string.pause_episode),
                     )
                 } else {
                     Icon(
                         AppIcons.PlayArrow,
-                        stringResource(R.string.play_podcast),
+                        stringResource(R.string.play_episode),
                     )
 
                 }

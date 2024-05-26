@@ -70,11 +70,19 @@ class PlayerService : LifecycleService() {
             .setContentTitle("Playing episode")
             // TODO: extract string resources
             // TODO: make the pause and play buttons take the same place
-            .addAction(R.drawable.play_arrow, "Play", buildIntent(Actions.Play))
-            .addAction(R.drawable.pause, "Pause", buildIntent(Actions.Pause))
+            .addAction(
+                R.drawable.play_arrow,
+                getString(R.string.play_episode),
+                buildIntent(Actions.Play)
+            )
+            .addAction(
+                R.drawable.pause,
+                getString(R.string.pause_episode),
+                buildIntent(Actions.Pause)
+            )
             .addAction(
                 R.drawable.close,
-                "exit player",
+                getString(R.string.close_player),
                 buildIntent(Actions.Exit)
             )
             // TODO: once play and pause are in the same place, make this
