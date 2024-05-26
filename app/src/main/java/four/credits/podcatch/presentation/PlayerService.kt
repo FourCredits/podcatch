@@ -1,5 +1,6 @@
 package four.credits.podcatch.presentation
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -36,9 +37,11 @@ class PlayerService : LifecycleService() {
     ): Int {
         if (!started) start()
         when (intent?.action) {
-            Actions.Play.toString() -> play()
-            Actions.Pause.toString() -> pause()
-            Actions.Exit.toString() -> stopSelf()
+            Actions.Play.toString() ->
+                lifecycleScope.launch { playManager.playCurrent() }
+            Actions.Pause.toString() ->
+                lifecycleScope.launch { playManager.pause() }
+            Actions.Close.toString() -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -54,6 +57,58 @@ class PlayerService : LifecycleService() {
         super.onDestroy()
     }
 
+    private fun start() {
+        val notification = buildNotification()
+        startForeground(notification)
+        started = true
+    }
+
+    private fun buildNotification(): Notification =
+        NotificationCompat.Builder(this, playerChannelId)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            // TODO: actually display something about the episode here
+            .setContentTitle("Playing episode")
+            // TODO: make the pause and play buttons take the same place
+            .addActions(actions())
+            // TODO: once play and pause are in the same place, make this
+            //  only one number
+            .setStyle(
+                MediaStyleNotificationHelper.MediaStyle(
+                    MediaSession.Builder(this, player).build()
+                ).setShowActionsInCompactView(0, 1)
+            ).build()
+
+    private fun startForeground(notification: Notification) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                playerNotificationId,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+            )
+        } else {
+            startForeground(playerNotificationId, notification)
+        }
+    }
+
+    private fun actions(): List<Triple<Int, CharSequence?, PendingIntent?>> {
+        val playAction = Triple(
+            R.drawable.play_arrow,
+            getString(R.string.play_episode),
+            buildIntent(Actions.Play),
+        )
+        val pauseAction = Triple(
+            R.drawable.pause,
+            getString(R.string.pause_episode),
+            buildIntent(Actions.Pause),
+        )
+        val closeAction = Triple(
+            R.drawable.close,
+            getString(R.string.close_player),
+            buildIntent(Actions.Close),
+        )
+        return listOf(playAction, pauseAction, closeAction)
+    }
+
     private fun buildIntent(action: Actions) =
         Intent(this, PlayerService::class.java).also {
             it.action = action.toString()
@@ -61,63 +116,12 @@ class PlayerService : LifecycleService() {
             PendingIntent.getService(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
         }
 
-    private fun start() {
-        // TODO: extract constants
-        val mediaSession = MediaSession.Builder(this, player).build()
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            // TODO: actually display something about the episode here
-            .setContentTitle("Playing episode")
-            // TODO: extract string resources
-            // TODO: make the pause and play buttons take the same place
-            .addAction(
-                R.drawable.play_arrow,
-                getString(R.string.play_episode),
-                buildIntent(Actions.Play)
-            )
-            .addAction(
-                R.drawable.pause,
-                getString(R.string.pause_episode),
-                buildIntent(Actions.Pause)
-            )
-            .addAction(
-                R.drawable.close,
-                getString(R.string.close_player),
-                buildIntent(Actions.Exit)
-            )
-            // TODO: once play and pause are in the same place, make this
-            //  only one number
-            .setStyle(
-                MediaStyleNotificationHelper.MediaStyle(mediaSession)
-                    .setShowActionsInCompactView(0, 1)
-            )
-            .build()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(
-                1,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-            )
-        } else {
-            startForeground(
-                1,
-                notification,
-            )
-        }
-        started = true
-    }
-
-    private fun pause() {
-        lifecycleScope.launch { playManager.pause() }
-    }
-
-    private fun play() {
-        lifecycleScope.launch { playManager.playCurrent() }
-    }
-
-    enum class Actions { Play, Pause, Exit }
-
-    companion object {
-        const val channelId = "player"
-    }
+    enum class Actions { Play, Pause, Close }
 }
+
+private fun NotificationCompat.Builder.addActions(
+    actions: Iterable<Triple<Int, CharSequence?, PendingIntent?>>,
+) = this.apply { actions.forEach { it.applyTo(::addAction) } }
+
+private fun <A, B, C, D> Triple<A, B, C>.applyTo(f: (A, B, C) -> D): D =
+    f(this.first, this.second, this.third)

@@ -3,7 +3,6 @@ package four.credits.podcatch
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Intent
 import android.os.Build
 import androidx.core.content.getSystemService
 import androidx.media3.exoplayer.ExoPlayer
@@ -15,15 +14,13 @@ import four.credits.podcatch.data.RealPodcastRepository
 import four.credits.podcatch.data.persistence.PodcastDatabase
 import four.credits.podcatch.domain.EpisodeRepository
 import four.credits.podcatch.domain.PodcastRepository
-import four.credits.podcatch.presentation.PlayerService
+import four.credits.podcatch.presentation.playerChannelId
+import four.credits.podcatch.presentation.playerNotificationDescription
 
 class PodcatchApplication : Application() {
     private val database by lazy {
-        Room.databaseBuilder(
-            this,
-            PodcastDatabase::class.java,
-            "podcast-db"
-        ).build()
+        Room.databaseBuilder(this, PodcastDatabase::class.java, "podcast-db")
+            .build()
     }
 
     val podcastRepository: PodcastRepository by lazy {
@@ -45,15 +42,14 @@ class PodcatchApplication : Application() {
     }
 
     private fun setUpNotifications() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "player",
-                "Player Notifications",
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        getSystemService<NotificationManager>()!!.createNotificationChannel(
+            NotificationChannel(
+                playerChannelId,
+                playerNotificationDescription,
                 NotificationManager.IMPORTANCE_LOW
             )
-            getSystemService<NotificationManager>()!!
-                .createNotificationChannel(channel)
-        }
+        )
     }
 
     override fun onTerminate() {
