@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.Player
@@ -21,9 +22,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
 class PlayerService : LifecycleService() {
-    private var started = false
     private lateinit var playManager: PlayManager
     private lateinit var player: Player
+    private lateinit var session: MediaSession
 
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
@@ -31,36 +32,39 @@ class PlayerService : LifecycleService() {
     }
 
     override fun onStartCommand(
-        intent: Intent?,
-        flags: Int,
-        startId: Int
+        intent: Intent?, flags: Int, startId: Int
     ): Int {
-        if (!started) start()
+        updateNotification()
         when (intent?.action) {
-            Actions.Play.toString() ->
-                lifecycleScope.launch { playManager.playCurrent() }
-            Actions.Pause.toString() ->
-                lifecycleScope.launch { playManager.pause() }
+            Actions.Play.toString() -> launch { playManager.playCurrent() }
+            Actions.Pause.toString() -> launch { playManager.pause() }
             Actions.Close.toString() -> stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private fun launch(action: suspend () -> Unit) {
+        lifecycleScope.launch { action() }
+    }
+
     override fun onCreate() {
         playManager = (application as PodcatchApplication).playManager
         player = (application as PodcatchApplication).player
+        session = MediaSession.Builder(this, player).build()
         super.onCreate()
     }
 
-    override fun onDestroy() {
-        started = false
-        super.onDestroy()
-    }
-
-    private fun start() {
+    private fun updateNotification() {
         val notification = buildNotification()
-        startForeground(notification)
-        started = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(
+                playerNotificationId,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+            )
+        } else {
+            startForeground(playerNotificationId, notification)
+        }
     }
 
     private fun buildNotification(): Notification =
@@ -73,22 +77,9 @@ class PlayerService : LifecycleService() {
             // TODO: once play and pause are in the same place, make this
             //  only one number
             .setStyle(
-                MediaStyleNotificationHelper.MediaStyle(
-                    MediaSession.Builder(this, player).build()
-                ).setShowActionsInCompactView(0, 1)
+                MediaStyleNotificationHelper.MediaStyle(session)
+                    .setShowActionsInCompactView(0, 1)
             ).build()
-
-    private fun startForeground(notification: Notification) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(
-                playerNotificationId,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-            )
-        } else {
-            startForeground(playerNotificationId, notification)
-        }
-    }
 
     private fun actions(): List<Triple<Int, CharSequence?, PendingIntent?>> {
         val playAction = Triple(
