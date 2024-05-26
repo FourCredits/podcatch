@@ -1,7 +1,6 @@
 package four.credits.podcatch.presentation
 
 import android.Manifest
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import four.credits.podcatch.presentation.PlayerService.*
 import four.credits.podcatch.presentation.screens.add_podcast.addPodcastScreen
 import four.credits.podcatch.presentation.screens.add_podcast.navigateToAddPodcast
 import four.credits.podcatch.presentation.screens.episode_details.episodeDetailsScreen
@@ -29,7 +27,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handlePermissions()
-        setContent { Root(::sendActionToService) }
+        setContent { Root() }
     }
 
     private fun handlePermissions() {
@@ -42,30 +40,20 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
-    private fun sendActionToService(action: Actions) {
-        Intent(applicationContext, PlayerService::class.java).also {
-            it.action = action.toString()
-            startService(it)
-        }
-    }
-
 }
 
 @Composable
-private fun Root(sendAction: (Actions) -> Unit) = PodcatchTheme {
+private fun Root() = PodcatchTheme {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        NavRoot(sendAction)
+        NavRoot()
     }
 }
 
 @Composable
-private fun NavRoot(
-    sendActionToService: (Actions) -> Unit
-) {
+private fun NavRoot() {
     val navController = rememberNavController()
     NavHost(navController, startDestination = ViewPodcastsRoute) {
         viewPodcastsScreen(
@@ -77,8 +65,6 @@ private fun NavRoot(
             onNavigateUp = navController::popBackStack,
             onEpisodeClick = navController::navigateToEpisode
         )
-        episodeDetailsScreen(
-            onPlay = { sendActionToService(Actions.Play) },
-        ) { sendActionToService(Actions.Pause) }
+        episodeDetailsScreen()
     }
 }

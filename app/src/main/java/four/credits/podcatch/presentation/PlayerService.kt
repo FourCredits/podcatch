@@ -28,7 +28,6 @@ class PlayerService : MediaSessionService() {
         super.onDestroy()
     }
 
-    // TODO: use this method to get access to a media controller and use it
     override fun onGetSession(
         controllerInfo: MediaSession.ControllerInfo
     ): MediaSession? = mediaSession

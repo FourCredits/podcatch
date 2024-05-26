@@ -32,10 +32,7 @@ import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
-fun NavGraphBuilder.episodeDetailsScreen(
-    onPlay: () -> Unit,
-    onPause: () -> Unit,
-) = composable(
+fun NavGraphBuilder.episodeDetailsScreen() = composable(
     "$EpisodeDetailsRoute/{$IdArg}",
     arguments = listOf(navArgument(IdArg) { type = NavType.LongType })
 ) {
@@ -49,14 +46,8 @@ fun NavGraphBuilder.episodeDetailsScreen(
         downloadState,
         viewModel::downloadEpisode,
         viewModel::deleteEpisode,
-        onPlay = {
-            onPlay()
-            viewModel.playEpisode()
-        },
-        onPause = {
-            onPause()
-            viewModel.pauseEpisode()
-        },
+        viewModel::playEpisode,
+        viewModel::pauseEpisode,
     )
 }
 
