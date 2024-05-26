@@ -35,7 +35,7 @@ class PodcatchApplication : Application() {
         RealEpisodeRepository(downloadManager, database.episodeDao)
     }
 
-    private val player by lazy { ExoPlayer.Builder(this).build() }
+    val player by lazy { ExoPlayer.Builder(this).build() }
     val playManager by lazy { ExoPlayManager(player) }
 
     override fun onCreate() {

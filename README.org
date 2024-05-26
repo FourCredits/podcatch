@@ -52,10 +52,12 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 [[https://developer.android.com/training/data-storage/room]]
 *** DONE Migrating Room databases
 [[https://developer.android.com/training/data-storage/room/migrating-db-versions]]
-** TODO check out the example podcast app
+** DONE check out the example podcast app
+   CLOSED: [2024-05-26 Sun 18:16]
 *** link
 [[https://github.com/android/compose-samples/tree/main/Jetcaster][compose-samples/Jetcaster]]
 *** only for when i'm happy with mine, or really stuck
+*** it didn't actually even play audio! that's cheating
 ** CANCELLED try using dash
    CLOSED: [2024-05-26 Sun 17:44]
 ** DONE extract podcast playing code into a separate part
@@ -65,7 +67,8 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 ** TODO user should be able to pause/play the current podcast without going to the details screen
 ** DONE podcasts should keep playing even after the app is closed
    CLOSED: [2024-05-26 Sun 17:44]
-** TODO you should be able to control playback from a widget in your notification menu
+** DONE you should be able to control playback from a widget in your notification menu
+   CLOSED: [2024-05-26 Sun 18:15]
 ** TODO you should be able to control playback from a widget on your homescreen
 ** TODO try downloading via exoplayer's built-in mechanisms for it
 ** TODO make a way to cancel downloads
