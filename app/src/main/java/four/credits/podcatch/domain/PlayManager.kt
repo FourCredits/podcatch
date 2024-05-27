@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 interface PlayManager {
     fun currentlyPlaying(): Flow<PlayState>
     suspend fun play(id: Long, uri: String)
+    suspend fun playCurrent()
     suspend fun pause()
 }
 
