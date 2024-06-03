@@ -18,14 +18,22 @@ import java.io.File
 import java.util.concurrent.Executor
 
 @OptIn(UnstableApi::class)
-class PodcastDownloadService : DownloadService(foregroundNotificationId) {
-    override fun getDownloadManager() = getDownloadManager(this)
-    override fun getScheduler() = WorkManagerScheduler(this, workName)
+class PodcastDownloadService : DownloadService(
+    foregroundNotificationId,
+    DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
+    downloadNotificationChannelId,
+    androidx.media3.exoplayer.R.string.exo_download_notification_channel_name,
+    0
+) {
+    override fun getDownloadManager() =
+        PodcastDownloadService.downloadManager.getOrCreate(this)
+
+    override fun getScheduler() = WorkManagerScheduler(this, downloadNotificationChannelId)
 
     override fun getForegroundNotification(
-        downloads: MutableList<Download>,
+        downloads: List<Download>,
         notMetRequirements: Int,
-    ) = getNotificationHelper(this).buildProgressNotification(
+    ) = notificationHelper.getOrCreate(this).buildProgressNotification(
         this,
         R.drawable.download,
         null, // TODO: make this not null
@@ -34,43 +42,47 @@ class PodcastDownloadService : DownloadService(foregroundNotificationId) {
         notMetRequirements
     )
 
+    // TODO: make this whole thing a lot better
     companion object {
-        private var manager: DownloadManager? = null
-        private var file: File? = null
-        private var notificationHelper: DownloadNotificationHelper? = null
+        val downloadManager = ContextInitialised { context ->
+            DownloadManager(
+                context,
+                databaseProvider.getOrCreate(context),
+                downloadCache.getOrCreate(context),
+                DefaultHttpDataSource.Factory(),
+                Executor(Runnable::run)
+            )
+        }
 
-        private fun getDownloadManager(context: Context) =
-            manager ?: createDownloadManager(context).also { manager = it }
+        val databaseProvider = ContextInitialised(::StandaloneDatabaseProvider)
 
-        private fun createDownloadManager(context: Context): DownloadManager =
-            StandaloneDatabaseProvider(context).let { databaseProvider ->
-                DownloadManager(
-                    context,
-                    databaseProvider,
-                    createCache(context, databaseProvider),
-                    DefaultHttpDataSource.Factory(),
-                    Executor(Runnable::run)
-                )
-            }
+        val downloadCache = ContextInitialised { context ->
+            SimpleCache(
+                downloadDirectory.getOrCreate(context),
+                NoOpCacheEvictor(),
+                databaseProvider.getOrCreate(context)
+            )
+        }
 
-        private fun createCache(
-            context: Context,
-            databaseProvider: StandaloneDatabaseProvider,
-        ) = SimpleCache(getFile(context), NoOpCacheEvictor(), databaseProvider)
-
-        private fun getFile(context: Context): File =
-            file ?: createFile(context).also { file = it }
-
-        private fun createFile(context: Context) =
+        val downloadDirectory = ContextInitialised { context ->
             context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS)
             ?: File(context.filesDir, "downloads")
+        }
 
-        private fun getNotificationHelper(context: Context) =
-            notificationHelper ?: DownloadNotificationHelper(
+        val notificationHelper = ContextInitialised { context ->
+            DownloadNotificationHelper(
                 context,
                 downloadNotificationChannelId
-            ).also { notificationHelper = it }
+            )
+        }
     }
+}
+
+class ContextInitialised<T>(private val create: (Context) -> T) {
+    private var value: T? = null
+
+    fun getOrCreate(context: Context) =
+        value ?: create(context).also { value = it }
 }
 
 // TODO: move elsewhere

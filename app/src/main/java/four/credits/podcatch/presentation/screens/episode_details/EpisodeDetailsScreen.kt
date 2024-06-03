@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,13 +42,14 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
     )
     val episode by viewModel.episode.collectAsStateWithLifecycle()
     val downloadState by viewModel.downloadState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     EpisodeDetailsScreen(
-        episode,
-        downloadState,
-        viewModel::downloadEpisode,
-        viewModel::deleteEpisode,
-        viewModel::playEpisode,
-        viewModel::pauseEpisode,
+        episode = episode,
+        downloadState = downloadState,
+        onDownload = { viewModel.downloadEpisode(context) },
+        onDelete = { viewModel.removeDownload(context) },
+        onPlay = { viewModel.playEpisode(context) },
+        onPause = viewModel::pauseEpisode,
     )
 }
 
@@ -139,12 +141,9 @@ private fun BottomPanel(
 }
 
 @Composable
-private fun ProgressIndication(downloadState: InProgress) {
-    val amount = downloadState.downloadProgress.amountDownloaded()
-    Row {
-        CircularProgressIndicator(progress = { amount })
-        Text("${(amount * 100).toUInt()}%")
-    }
+private fun ProgressIndication(downloadState: InProgress) = Row {
+    CircularProgressIndicator(progress = { downloadState.progress })
+    Text("${(downloadState.progress * 100).toUInt()}%")
 }
 
 @Preview(showBackground = true)
@@ -173,7 +172,7 @@ private fun BottomPanelPreview() = PodcatchTheme {
             onPause = {},
         )
         BottomPanel(
-            downloadState = InProgress(DownloadProgress(2345, 7652)),
+            downloadState = InProgress(2345f / 7652f),
             onDelete = {},
             onDownload = {},
             onPlay = {},
@@ -192,7 +191,7 @@ private fun EpisodeDetailsScreenPreview() {
                 "A description for the episode",
                 "shouldn't be shown",
             ),
-            downloadState = InProgress(DownloadProgress(25, 100)),
+            downloadState = InProgress(25f / 100f),
             onDownload = {},
             onDelete = {},
             onPlay = {},
