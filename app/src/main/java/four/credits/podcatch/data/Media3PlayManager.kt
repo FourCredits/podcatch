@@ -1,37 +1,38 @@
 package four.credits.podcatch.data
 
-import androidx.media3.common.MediaItem
+import android.content.Context
+import androidx.annotation.OptIn
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.PlayManager
 import four.credits.podcatch.domain.PlayState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class Media3PlayManager(private val player: Player): PlayManager {
+@OptIn(UnstableApi::class)
+class Media3PlayManager(
+    private val context: Context,
+    private val player: Player
+): PlayManager {
     private val currentlyPlaying: MutableStateFlow<PlayState> =
         MutableStateFlow(PlayState.NotStarted)
 
-    override fun currentlyPlaying(): Flow<PlayState> = currentlyPlaying
+    override fun currentlyPlaying(): StateFlow<PlayState> = currentlyPlaying
 
-    override suspend fun play(id: Long, uri: String) {
-        currentlyPlaying.value.takeIf { it.playingId != id }?.run {
-            player.setMediaItem(MediaItem.fromUri(uri))
+    override suspend fun play(episode: Episode) {
+        if (currentlyPlaying.value.playingId != episode.id) {
+            val download = getDownload(context, episode.link) ?: return
+            val mediaItem = download.request.toMediaItem()
+            player.setMediaItem(mediaItem)
         }
-        playInternal(id)
-    }
-
-    override suspend fun playCurrent() =
-        currentlyPlaying.value.playingId?.let { playInternal(it) } ?: Unit
-
-    private suspend fun playInternal(id: Long) {
         player.play()
-        currentlyPlaying.emit(PlayState.Playing(id))
+        currentlyPlaying.emit(PlayState.Playing(episode.id))
     }
 
     override suspend fun pause() {
-        currentlyPlaying.value.playingId?.let {
-            currentlyPlaying.emit(PlayState.Paused(it))
-            player.pause()
-        }
+        val id = currentlyPlaying.value.playingId ?: return
+        currentlyPlaying.emit(PlayState.Paused(id))
+        player.pause()
     }
 }

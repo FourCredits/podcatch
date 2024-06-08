@@ -79,3 +79,4 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 *** TODO make the player notification show details about the currently playing episode
 *** TODO make the player buttons look a little better
 ** TODO enable playing an episode without downloading it
+** TODO make the update progress spinner update more often
