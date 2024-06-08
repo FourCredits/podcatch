@@ -73,5 +73,10 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 ** TODO try downloading via exoplayer's built-in mechanisms for it
 ** TODO make a way to cancel downloads
 ** TODO request permissions correctly
-** TODO make the player notification show details about the currently playing episode
-** TODO make the player notification have one "slot" for the pause and play button
+** DONE make the player notification have one "slot" for the pause and play button
+   CLOSED: [2024-05-27 Mon 22:36]
+** TODO make the player from MediaSessionService a little better
+*** TODO make the player notification show details about the currently playing episode
+*** TODO make the player buttons look a little better
+** TODO enable playing an episode without downloading it
+** TODO make the update progress spinner update more often

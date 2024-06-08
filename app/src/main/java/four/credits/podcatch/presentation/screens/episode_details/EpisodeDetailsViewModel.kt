@@ -8,25 +8,28 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.media3.common.util.UnstableApi
 import four.credits.podcatch.PodcatchApplication
-import four.credits.podcatch.domain.DownloadProgress
+import four.credits.podcatch.domain.DownloadManager
+import four.credits.podcatch.domain.DownloadState
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.EpisodeRepository
 import four.credits.podcatch.domain.PlayManager
-import four.credits.podcatch.domain.PlayState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+// TODO: build in abstractions
 @OptIn(ExperimentalCoroutinesApi::class)
+@androidx.annotation.OptIn(UnstableApi::class)
 class EpisodeDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: EpisodeRepository,
+    private val downloadManager: DownloadManager,
     private val playManager: PlayManager,
 ) : ViewModel() {
     private val id = savedStateHandle.getStateFlow(IdArg, 0L)
@@ -35,43 +38,26 @@ class EpisodeDetailsViewModel(
         .filterIsInstance<Episode>()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), loading)
 
-    private val _downloadProgress = MutableStateFlow<DownloadProgress?>(null)
+    val downloadState = episode
+        .flatMapLatest(downloadManager::downloadStatus)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            DownloadState.NotDownloaded
+        )
 
-    val downloadState = combine(
-        _downloadProgress,
-        playManager.currentlyPlaying(),
-        episode,
-        ::determineDownloadState
-    ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(), NotDownloaded)
-
-    private fun determineDownloadState(
-        downloadProgress: DownloadProgress?,
-        playState: PlayState,
-        episode: Episode,
-    ): DownloadState = when {
-        episode.downloaded -> Downloaded(playState is PlayState.Playing && playState.playingId == episode.id)
-        downloadProgress?.isComplete() == false -> InProgress(downloadProgress)
-        else -> NotDownloaded
-    }
+    val isPlaying = playManager.currentlyPlaying()
 
     fun downloadEpisode() {
-        val ep = episode.value.apply { if (downloaded) return }
-        viewModelScope.launch {
-            repository.downloadEpisode(ep).collect(_downloadProgress)
-        }
+        viewModelScope.launch { downloadManager.download(episode.value) }
     }
 
-    fun deleteEpisode() {
-        val ep = episode.value.apply { if (downloaded) return }
-        viewModelScope.launch { repository.deleteDownload(ep) }
+    fun removeDownload() {
+        viewModelScope.launch { downloadManager.deleteDownload(episode.value) }
     }
 
     fun playEpisode() {
-        // TODO: should i add the below line back?
-        // if (downloadState.value !is Downloaded) return
-        val ep = episode.value
-        val uri = repository.getEpisodeUri(ep) ?: return
-        viewModelScope.launch { playManager.play(ep.id, uri) }
+        viewModelScope.launch { playManager.play(episode.value) }
     }
 
     fun pauseEpisode() {
@@ -87,14 +73,10 @@ class EpisodeDetailsViewModel(
                 EpisodeDetailsViewModel(
                     createSavedStateHandle(),
                     application.episodeRepository,
+                    application.downloadManager,
                     application.playManager,
                 )
             }
         }
     }
 }
-
-sealed interface DownloadState
-data object NotDownloaded : DownloadState
-data class Downloaded(val playing: Boolean) : DownloadState
-data class InProgress(val downloadProgress: DownloadProgress) : DownloadState

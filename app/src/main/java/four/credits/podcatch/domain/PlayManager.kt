@@ -1,11 +1,11 @@
 package four.credits.podcatch.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface PlayManager {
-    fun currentlyPlaying(): Flow<PlayState>
-    suspend fun play(id: Long, uri: String)
-    suspend fun playCurrent()
+    fun currentlyPlaying(): StateFlow<PlayState>
+    suspend fun play(episode: Episode)
     suspend fun pause()
 }
 

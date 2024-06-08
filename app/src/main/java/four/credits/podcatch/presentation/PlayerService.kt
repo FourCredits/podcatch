@@ -1,17 +1,30 @@
 package four.credits.podcatch.presentation
 
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 
 class PlayerService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
 
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
-        val player = ExoPlayer.Builder(this).build()
+        val cacheDataSourceFactory = CacheDataSource.Factory()
+            .setCache(PodcastDownloadService.downloadCache.getOrCreate(this))
+            .setUpstreamDataSourceFactory(null)
+            .setCacheWriteDataSinkFactory(null) // disable writing
+        val dataSourceFactory = DefaultMediaSourceFactory(this)
+            .setDataSourceFactory(cacheDataSourceFactory)
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(dataSourceFactory)
+            .build()
         mediaSession = MediaSession.Builder(this, player).build()
     }
 
