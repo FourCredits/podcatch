@@ -27,25 +27,29 @@ import four.credits.podcatch.presentation.playerNotificationDescription
 
 @OptIn(UnstableApi::class)
 class PodcatchApplication : Application() {
-    private val database by lazy {
-        Room.databaseBuilder(this, PodcastDatabase::class.java, "podcast-db")
-            .build()
-    }
-
-    val podcastRepository: PodcastRepository by lazy {
-        RealPodcastRepository(database.podcastDao, database.episodeDao)
-    }
-
-    val downloadManager: DownloadManager by lazy {
-        Media3DownloadManager(this)
-    }
-
-    val episodeRepository: EpisodeRepository by lazy {
-        RealEpisodeRepository(database.episodeDao)
-    }
-
+    lateinit var podcastRepository: PodcastRepository private set
+    lateinit var downloadManager: DownloadManager private set
+    lateinit var episodeRepository: EpisodeRepository private set
+    lateinit var playManager: Media3PlayManager private set
     private lateinit var player: Player
-    lateinit var playManager: Media3PlayManager
+
+    override fun onCreate() {
+        super.onCreate()
+        createController()
+        setUpNotifications()
+        val database = Room
+            .databaseBuilder(this, PodcastDatabase::class.java, "podcast-db")
+            .build()
+        podcastRepository =
+            RealPodcastRepository(database.podcastDao, database.episodeDao)
+        episodeRepository = RealEpisodeRepository(database.episodeDao)
+        downloadManager = Media3DownloadManager(this)
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        player.release()
+    }
 
     private fun createController() {
         val context = applicationContext
@@ -74,16 +78,5 @@ class PodcatchApplication : Application() {
                 NotificationManager.IMPORTANCE_LOW
             )
         )
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        createController()
-        setUpNotifications()
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        player.release()
     }
 }
