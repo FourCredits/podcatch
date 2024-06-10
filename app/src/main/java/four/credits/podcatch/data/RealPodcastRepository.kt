@@ -25,7 +25,7 @@ class RealPodcastRepository(
     override suspend fun addPodcast(podcast: Podcast) {
         val podcastId = podcastDao.insertPodcast(podcast.toDatabaseModel())
         episodeDao.upsertEpisode(podcast.episodes.map { episode ->
-            episode.toDatabaseModel().copy(podcastId = podcastId)
+            episode.toDatabaseModel(podcastId)
         })
     }
 

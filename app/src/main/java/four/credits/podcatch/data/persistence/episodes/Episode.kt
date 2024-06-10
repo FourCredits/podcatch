@@ -25,8 +25,8 @@ data class Episode(
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) {
     fun toDomainModel(): DomainEpisode =
-        DomainEpisode(title, description, link, podcastId, id)
+        DomainEpisode(title, description, link, id)
 }
 
-fun DomainEpisode.toDatabaseModel() =
+fun DomainEpisode.toDatabaseModel(podcastId: Long) =
     Episode(title, description, link, podcastId, id)
