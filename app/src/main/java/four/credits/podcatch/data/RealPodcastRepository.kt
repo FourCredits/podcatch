@@ -1,6 +1,5 @@
 package four.credits.podcatch.data
 
-import android.content.Context
 import four.credits.podcatch.data.persistence.episodes.EpisodeDao
 import four.credits.podcatch.data.persistence.episodes.toDatabaseModel
 import four.credits.podcatch.data.persistence.podcasts.PodcastDao
@@ -10,7 +9,6 @@ import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.net.URL
@@ -38,13 +36,6 @@ class RealPodcastRepository(
         .getPodcastsOrderedByTitle()
         .map { podcasts -> podcasts.map { it.toDomainModel() } }
 
-    // TODO: make a better way of querying this
-    //  (should surely be able to be one query)
     override fun getPodcastById(id: Long): Flow<Podcast?> =
-        combine(
-            podcastDao.getPodcastById(id),
-            episodeDao.getEpisodesByPodcastId(id)
-        ) { podcast, episodes ->
-            podcast?.toDomainModel(episodes.map { it.toDomainModel() })
-        }
+        podcastDao.getPodcastWithEpisodes(id).map { it?.toDomainModel() }
 }
