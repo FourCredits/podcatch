@@ -15,11 +15,12 @@ import four.credits.podcatch.domain.DownloadState
 import four.credits.podcatch.domain.Episode
 import four.credits.podcatch.domain.EpisodeRepository
 import four.credits.podcatch.domain.PlayManager
+import four.credits.podcatch.domain.PlayState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -46,7 +47,10 @@ class EpisodeDetailsViewModel(
             DownloadState.NotDownloaded
         )
 
-    val isPlaying = playManager.currentlyPlaying()
+    val isPlaying =
+        combine(episode, playManager.currentlyPlaying()) { ep, playState ->
+            playState is PlayState.Playing && playState.playingId == ep.id
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
 
     fun downloadEpisode() {
         viewModelScope.launch { downloadManager.download(episode.value) }

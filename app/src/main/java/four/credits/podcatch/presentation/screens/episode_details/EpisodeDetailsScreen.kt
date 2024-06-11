@@ -32,7 +32,6 @@ import four.credits.podcatch.R
 import four.credits.podcatch.domain.DownloadProgress
 import four.credits.podcatch.domain.DownloadState
 import four.credits.podcatch.domain.Episode
-import four.credits.podcatch.domain.PlayState
 import four.credits.podcatch.presentation.theme.AppIcons
 import four.credits.podcatch.presentation.theme.PodcatchTheme
 
@@ -45,10 +44,7 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
     )
     val episode by viewModel.episode.collectAsStateWithLifecycle()
     val downloadState by viewModel.downloadState.collectAsStateWithLifecycle()
-    val playState by viewModel.isPlaying.collectAsStateWithLifecycle()
-    // TODO: move this logic somewhere else
-    val isPlaying =
-        playState is PlayState.Playing && playState.playingId == episode.id
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
     LocalContext.current
     EpisodeDetailsScreen(
         episode = episode,
