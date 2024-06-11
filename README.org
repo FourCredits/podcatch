@@ -81,5 +81,6 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
 ** TODO enable playing an episode without downloading it
 ** TODO make the update progress spinner update more often
 ** TODO things in the data section shouldn't depend on things in the presentation
-   The PodcastDownloadService, specifically. i'm not sure exactly what the
-   answer to that is, to be honest, but it feels icky
+   The PodcastDownloadService, specifically. i'm not sure exactly what the answer to that is, to be honest, but it feels icky
+** TODO use the new type-safe nagivation api
+** TODO consider using mvi pattern instead of mvvm
