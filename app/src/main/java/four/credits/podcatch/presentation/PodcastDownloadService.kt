@@ -90,6 +90,5 @@ class ContextInitialised<T>(private val create: (Context) -> T) {
 private const val foregroundNotificationId = 2
 private const val downloadNotificationChannelId = "download_channel"
 
-// TODO: should these be a string resource thing?
-private const val workName = "podcast_downloading"
+// TODO: should this be a string resource thing?
 private const val downloadingMessage = "Podcatch is downloading..."
