@@ -58,4 +58,7 @@ class Media3DownloadManager(val context: Context) : DownloadManager {
             episode.link,
             false
         )
+
+    override suspend fun cancelDownload(episode: Episode) =
+        deleteDownload(episode)
 }

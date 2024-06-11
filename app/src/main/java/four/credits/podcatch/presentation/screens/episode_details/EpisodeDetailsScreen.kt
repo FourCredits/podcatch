@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
@@ -46,7 +47,8 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
     val downloadState by viewModel.downloadState.collectAsStateWithLifecycle()
     val playState by viewModel.isPlaying.collectAsStateWithLifecycle()
     // TODO: move this logic somewhere else
-    val isPlaying = playState is PlayState.Playing && playState.playingId == episode.id
+    val isPlaying =
+        playState is PlayState.Playing && playState.playingId == episode.id
     LocalContext.current
     EpisodeDetailsScreen(
         episode = episode,
@@ -54,6 +56,7 @@ fun NavGraphBuilder.episodeDetailsScreen() = composable(
         isPlaying = isPlaying,
         onDownload = viewModel::downloadEpisode,
         onDelete = viewModel::removeDownload,
+        onCancel = viewModel::cancelDownload,
         onPlay = viewModel::playEpisode,
         onPause = viewModel::pauseEpisode,
     )
@@ -73,6 +76,7 @@ private fun EpisodeDetailsScreen(
     isPlaying: Boolean,
     onDownload: () -> Unit,
     onDelete: () -> Unit,
+    onCancel: () -> Unit,
     onPlay: () -> Unit,
     onPause: () -> Unit,
 ) {
@@ -85,8 +89,9 @@ private fun EpisodeDetailsScreen(
         BottomPanel(
             downloadState,
             isPlaying,
-            onDelete,
             onDownload,
+            onDelete,
+            onCancel,
             onPlay,
             onPause
         )
@@ -97,8 +102,9 @@ private fun EpisodeDetailsScreen(
 private fun BottomPanel(
     downloadState: DownloadState,
     isPlaying: Boolean,
-    onDelete: () -> Unit,
     onDownload: () -> Unit,
+    onDelete: () -> Unit,
+    onCancel: () -> Unit,
     onPlay: () -> Unit,
     onPause: () -> Unit,
 ) = Row(
@@ -135,8 +141,10 @@ private fun BottomPanel(
         }
 
         is DownloadState.InProgress -> {
-            ProgressIndication(downloadState)
-            // TODO: option to cancel a download partway through
+            ProgressIndication(downloadState.progress)
+            IconButton(onClick = onCancel) {
+                Icon(AppIcons.Close, stringResource(R.string.cancel_download))
+            }
         }
 
         DownloadState.NotDownloaded -> IconButton(onClick = onDownload) {
@@ -149,22 +157,28 @@ private fun BottomPanel(
 }
 
 @Composable
-private fun ProgressIndication(downloadState: DownloadState.InProgress) = Row {
-    CircularProgressIndicator(
-        progress = { downloadState.progress.percentage / 100 }
-    )
-    Text("${downloadState.progress.percentage.toUInt()}%")
+private fun ProgressIndication(downloadProgress: DownloadProgress) = Row {
+    CircularProgressIndicator(progress = { downloadProgress.asDecimal() })
+    Text("${downloadProgress.percentage.toUInt()}%")
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun BottomPanelPreview() = PodcatchTheme {
     Column {
-        BottomPanel(DownloadState.Downloaded, true, {}, {}, {}, {})
-        BottomPanel(DownloadState.Downloaded, false, {}, {}, {}, {})
-        BottomPanel(DownloadState.NotDownloaded, false, {}, {}, {}, {})
+        BottomPanel(DownloadState.Downloaded, true, {}, {}, {}, {}, {})
+        BottomPanel(DownloadState.Downloaded, false, {}, {}, {}, {}, {})
+        BottomPanel(DownloadState.NotDownloaded, false, {}, {}, {}, {}, {})
         val progress = DownloadProgress(2345f / 7652f)
-        BottomPanel(DownloadState.InProgress(progress), false, {}, {}, {}, {})
+        BottomPanel(
+            DownloadState.InProgress(progress),
+            false,
+            {},
+            {},
+            {},
+            {},
+            {}
+        )
     }
 }
 
@@ -177,5 +191,5 @@ private fun EpisodeDetailsScreenPreview() = PodcatchTheme {
         "A description for the episode",
         "shouldn't be shown",
     )
-    EpisodeDetailsScreen(episode, inProgress, false, {}, {}, {}, {})
+    EpisodeDetailsScreen(episode, inProgress, false, {}, {}, {}, {}, {})
 }

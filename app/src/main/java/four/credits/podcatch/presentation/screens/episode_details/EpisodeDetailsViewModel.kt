@@ -56,6 +56,10 @@ class EpisodeDetailsViewModel(
         viewModelScope.launch { downloadManager.deleteDownload(episode.value) }
     }
 
+    fun cancelDownload() {
+        viewModelScope.launch { downloadManager.cancelDownload(episode.value) }
+    }
+
     fun playEpisode() {
         viewModelScope.launch { playManager.play(episode.value) }
     }
