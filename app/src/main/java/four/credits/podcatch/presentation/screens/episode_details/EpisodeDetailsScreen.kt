@@ -8,9 +8,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -77,11 +76,11 @@ private fun EpisodeDetailsScreen(
     onPause: () -> Unit,
 ) {
     Column {
-        // TODO: don't hardcode font sizes
-        Text(text = episode.title, fontSize = 24.sp)
-        HorizontalDivider()
+        Text(
+            text = episode.title,
+            style = MaterialTheme.typography.headlineLarge
+        )
         Text(text = episode.description, modifier = Modifier.weight(1f))
-        HorizontalDivider()
         BottomPanel(
             downloadState,
             isPlaying,
