@@ -84,3 +84,4 @@ Following the advice detailed [[https://developer.android.com/guide/navigation/d
    The PodcastDownloadService, specifically. i'm not sure exactly what the answer to that is, to be honest, but it feels icky
 ** TODO use the new type-safe nagivation api
 ** TODO consider using mvi pattern instead of mvvm
+** TODO use dagger hilt to simplify dependency injection
