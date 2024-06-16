@@ -27,7 +27,7 @@ class AddPodcastViewModel(
         _result.update { Result.Loading }
         viewModelScope.launch {
             _result.update {
-                Result.Loaded(podcastRepository.getPodcast(url.value))
+                Result.Loaded(podcastRepository.getNewPodcast(url.value))
             }
         }
     }

@@ -11,7 +11,7 @@ import four.credits.podcatch.domain.Episode as DomainEpisode
 @Entity(
     foreignKeys = [ForeignKey(
         entity = Podcast::class,
-        parentColumns = arrayOf("id"),
+        parentColumns = arrayOf("link"),
         childColumns = arrayOf("podcastId"),
         onDelete = ForeignKey.CASCADE,
         onUpdate = ForeignKey.CASCADE,
@@ -21,12 +21,12 @@ data class Episode(
     val title: String,
     val description: String,
     val link: String,
-    @ColumnInfo(index = true) val podcastId: Long,
+    @ColumnInfo(index = true) val podcastId: String,
     @PrimaryKey(autoGenerate = true) val id: Long = 0
 ) {
     fun toDomainModel(): DomainEpisode =
         DomainEpisode(title, description, link, id)
 }
 
-fun DomainEpisode.toDatabaseModel(podcastId: Long) =
+fun DomainEpisode.toDatabaseModel(podcastId: String) =
     Episode(title, description, link, podcastId, id)

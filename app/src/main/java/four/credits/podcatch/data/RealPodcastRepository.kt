@@ -4,7 +4,6 @@ import four.credits.podcatch.data.persistence.episodes.EpisodeDao
 import four.credits.podcatch.data.persistence.episodes.toDatabaseModel
 import four.credits.podcatch.data.persistence.podcasts.PodcastDao
 import four.credits.podcatch.data.persistence.podcasts.toDatabaseModel
-import four.credits.podcatch.data.persistence.podcasts.toDomainModel
 import four.credits.podcatch.domain.Podcast
 import four.credits.podcatch.domain.PodcastRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,16 +16,16 @@ class RealPodcastRepository(
     private val podcastDao: PodcastDao,
     private val episodeDao: EpisodeDao,
 ) : PodcastRepository {
-    override suspend fun getPodcast(url: String): Podcast =
+    override suspend fun getNewPodcast(url: String): Podcast =
         withContext(Dispatchers.IO) {
             URL(url).openStream().use { parsePodcast(it, url).first() }
         }
 
+    // TODO: should this be a transaction?
     override suspend fun addPodcast(podcast: Podcast) {
-        val podcastId = podcastDao.insertPodcast(podcast.toDatabaseModel())
-        episodeDao.upsertEpisode(podcast.episodes.map { episode ->
-            episode.toDatabaseModel(podcastId)
-        })
+        podcastDao.upsertPodcast(podcast.toDatabaseModel())
+        val episodes = podcast.episodes.map { it.toDatabaseModel(podcast.link) }
+        episodeDao.upsertEpisode(episodes)
     }
 
     override suspend fun deletePodcast(podcast: Podcast) =
@@ -36,6 +35,6 @@ class RealPodcastRepository(
         .getPodcastsOrderedByTitle()
         .map { podcasts -> podcasts.map { it.toDomainModel() } }
 
-    override fun getPodcastById(id: Long): Flow<Podcast?> =
+    override fun getPodcastById(id: String): Flow<Podcast?> =
         podcastDao.getPodcastWithEpisodes(id).map { it?.toDomainModel() }
 }

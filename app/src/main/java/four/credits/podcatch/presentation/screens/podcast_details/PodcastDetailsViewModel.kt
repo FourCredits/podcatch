@@ -23,7 +23,7 @@ class PodcastDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: PodcastRepository,
 ) : ViewModel() {
-    private val id = savedStateHandle.getStateFlow(IdArg, 0L)
+    private val id = savedStateHandle.getStateFlow(IdArg, "")
 
     val podcast = id
         .flatMapLatest(repository::getPodcastById)

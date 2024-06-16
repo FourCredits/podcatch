@@ -32,7 +32,7 @@ import four.credits.podcatch.presentation.theme.PodcatchTheme
 
 fun NavGraphBuilder.viewPodcastsScreen(
     onAddPressed: () -> Unit,
-    onPodcastPressed: (Long) -> Unit,
+    onPodcastPressed: (Podcast) -> Unit,
 ) = composable(ViewPodcastsRoute) {
     val podcasts by viewModel<ViewPodcastsViewModel>(
         factory = ViewPodcastsViewModel.Factory
@@ -50,7 +50,7 @@ const val ViewPodcastsRoute = "view_podcasts"
 private fun ViewPodcastsScreen(
     podcasts: List<Podcast>,
     onAddPodcastPressed: () -> Unit,
-    onPodcastPressed: (Long) -> Unit,
+    onPodcastPressed: (Podcast) -> Unit,
 ) {
     Scaffold(
         floatingActionButton = {
@@ -63,7 +63,7 @@ private fun ViewPodcastsScreen(
                 LocalSpacing.current.medium
             )
         ) {
-            items(podcasts, key = { it.id }) {
+            items(podcasts, key = { it.link }) {
                 PodcastDisplay(podcast = it, onPressed = onPodcastPressed)
             }
         }
@@ -71,8 +71,8 @@ private fun ViewPodcastsScreen(
 }
 
 @Composable
-fun PodcastDisplay(podcast: Podcast, onPressed: (Long) -> Unit) {
-    Card(modifier = Modifier.clickable { onPressed(podcast.id) }) {
+fun PodcastDisplay(podcast: Podcast, onPressed: (Podcast) -> Unit) =
+    Card(modifier = Modifier.clickable { onPressed(podcast) }) {
         Text(text = podcast.title)
         HorizontalDivider()
         Text(
@@ -81,7 +81,6 @@ fun PodcastDisplay(podcast: Podcast, onPressed: (Long) -> Unit) {
             overflow = TextOverflow.Ellipsis
         )
     }
-}
 
 @Composable
 private fun AddPodcastFloatingActionButton(onAddPodcastPressed: () -> Unit) {
@@ -101,23 +100,20 @@ private fun ViewPodcastsScreenPreview() {
         Podcast(
             "Podcast 1",
             "A podcast about movies",
-            link = "",
+            link = "1",
             episodes = listOf(),
-            id = 1,
         ),
         Podcast(
             "Podcast 2",
             "A podcast about music",
-            link = "",
+            link = "2",
             episodes = listOf(),
-            id = 2,
         ),
         Podcast(
             "Podcast 3",
             "A podcast about coding",
-            link = "",
+            link = "3",
             episodes = listOf(),
-            id = 3
         ),
     )
     PodcatchTheme {

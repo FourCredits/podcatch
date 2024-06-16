@@ -35,7 +35,7 @@ fun NavGraphBuilder.podcastDetailsScreen(
     onEpisodeClick: (Long) -> Unit,
 ) = composable(
     "$PodcastDetailsRoute/{$IdArg}",
-    arguments = listOf(navArgument(IdArg) { type = NavType.LongType })
+    arguments = listOf(navArgument(IdArg) { type = NavType.StringType })
 ) {
     val viewModel = viewModel<PodcastDetailsViewModel>(
         factory = PodcastDetailsViewModel.Factory,
@@ -51,8 +51,8 @@ fun NavGraphBuilder.podcastDetailsScreen(
     )
 }
 
-fun NavController.navigateToPodcast(id: Long) =
-    navigate("$PodcastDetailsRoute/$id")
+fun NavController.navigateToPodcast(podcast: Podcast) =
+    navigate("$PodcastDetailsRoute/${podcast.link}")
 
 private const val PodcastDetailsRoute = "podcast_details"
 internal const val IdArg = "podcastId"

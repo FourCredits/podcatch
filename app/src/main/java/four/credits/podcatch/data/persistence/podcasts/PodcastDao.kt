@@ -14,9 +14,6 @@ import four.credits.podcatch.domain.Podcast as DomainPodcast
 
 @Dao
 interface PodcastDao {
-    @Insert
-    suspend fun insertPodcast(podcast: Podcast): Long
-
     @Upsert
     suspend fun upsertPodcast(podcast: Podcast)
 
@@ -27,13 +24,13 @@ interface PodcastDao {
     fun getPodcastsOrderedByTitle(): Flow<List<Podcast>>
 
     @Transaction
-    @Query("SELECT * FROM podcast WHERE podcast.id = :id")
-    fun getPodcastWithEpisodes(id: Long): Flow<PodcastAndEpisodes?>
+    @Query("SELECT * FROM podcast WHERE podcast.link = :podcastId")
+    fun getPodcastWithEpisodes(podcastId: String): Flow<PodcastAndEpisodes?>
 }
 
 data class PodcastAndEpisodes(
     @Embedded val podcast: Podcast,
-    @Relation(parentColumn = "id", entityColumn = "podcastId")
+    @Relation(parentColumn = "link", entityColumn = "podcastId")
     val episodes: List<Episode> = emptyList()
 ) {
     fun toDomainModel() = DomainPodcast(
@@ -41,6 +38,5 @@ data class PodcastAndEpisodes(
         podcast.description,
         podcast.link,
         episodes.map { it.toDomainModel() },
-        podcast.id
     )
 }

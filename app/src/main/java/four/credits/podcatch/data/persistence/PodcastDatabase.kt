@@ -12,7 +12,7 @@ import four.credits.podcatch.data.persistence.podcasts.PodcastDao
 
 @Database(
     entities = [Podcast::class, Episode::class],
-    version = 5,
+    version = 6,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -22,6 +22,11 @@ import four.credits.podcatch.data.persistence.podcasts.PodcastDao
             to = 5,
             spec = PodcastDatabase.Migration4To5::class
         ),
+        AutoMigration(
+            from = 5,
+            to = 6,
+            spec = PodcastDatabase.Migration5To6::class
+        ),
     ]
 )
 abstract class PodcastDatabase : RoomDatabase() {
@@ -30,4 +35,7 @@ abstract class PodcastDatabase : RoomDatabase() {
 
     @DeleteColumn(tableName = "Episode", columnName = "downloaded")
     class Migration4To5 : AutoMigrationSpec
+
+    @DeleteColumn(tableName = "Podcast", columnName = "id")
+    class Migration5To6 : AutoMigrationSpec
 }
