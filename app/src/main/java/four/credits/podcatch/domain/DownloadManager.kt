@@ -2,11 +2,11 @@ package four.credits.podcatch.domain
 
 import kotlinx.coroutines.flow.Flow
 
-// TODO: a better name for this?
 interface DownloadManager {
     fun downloadStatus(episode: Episode): Flow<DownloadState>
     suspend fun download(episode: Episode)
     suspend fun deleteDownload(episode: Episode)
+    suspend fun cancelDownload(episode: Episode)
 }
 
 sealed interface DownloadState {
@@ -16,4 +16,5 @@ sealed interface DownloadState {
 }
 
 data class DownloadProgress(val percentage: Float = 0f) {
+    fun asDecimal() = percentage / 100
 }

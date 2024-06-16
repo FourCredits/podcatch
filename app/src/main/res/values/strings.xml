@@ -15,4 +15,5 @@
     <string name="pause_episode">Pause episode</string>
     <string name="play_episode">Play episode</string>
     <string name="close_player">close player</string>
+    <string name="cancel_download">cancel download</string>
 </resources>
