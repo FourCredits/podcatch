@@ -39,6 +39,7 @@ class PodcatchApplication : Application() {
         setUpNotifications()
         val database = Room
             .databaseBuilder(this, PodcastDatabase::class.java, "podcast-db")
+            .fallbackToDestructiveMigrationFrom(5)
             .build()
         podcastRepository =
             RealPodcastRepository(database.podcastDao, database.episodeDao)
